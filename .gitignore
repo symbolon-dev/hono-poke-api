@@ -1,0 +1,51 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# TypeScript build output
+dist/
+build/
+out/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# IDE/editor-specific files
+.vscode/
+.idea/
+.DS_Store
+
+# Logs
+logs
+*.log
+logs/*
+*.pid
+*.seed
+*.pid.lock
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Cache / data files
+pokemon-cache.json
+.cache/
+.tmp/
+
+# Coverage (if you use testing)
+coverage/
+
+# Optional lock files (if you use only one package manager, ignore others)
+# Uncomment only what you don't use
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
