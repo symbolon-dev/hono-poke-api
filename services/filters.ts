@@ -1,4 +1,4 @@
-import type { PokemonData, QueryParams } from '../../types/pokemon.js';
+import type { PokemonData, QueryParams } from '../types/pokemon.js';
 
 const byNameSearch = (searchTerm: string) => (pokemon: PokemonData): boolean =>
     pokemon.name.toLowerCase().includes(searchTerm.toLowerCase());

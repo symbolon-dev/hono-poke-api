@@ -1,7 +1,7 @@
-import type { GenerationData, PokemonDetails } from '../../schemas/pokemon.schema.js';
-import type { PokemonData } from '../../types/pokemon.js';
+import type { GenerationData, PokemonDetails } from '../schemas/pokemon.schema.js';
+import type { PokemonData } from '../types/pokemon.js';
 
-import { GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, EvolutionSchema } from '../../schemas/pokemon.schema.js';
+import { GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, EvolutionSchema } from '../schemas/pokemon.schema.js';
 
 import { mapPokemonData } from './mappers.js';
 
