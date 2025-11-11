@@ -61,6 +61,7 @@ export const PokemonDetailsSchema = z.object({
         })
     ),
     sprites: z.object({
+        front_default: z.string().nullish(),
         other: z.object({
             'official-artwork': z.object({
                 front_default: z.string().nullish(),

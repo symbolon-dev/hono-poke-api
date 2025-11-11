@@ -8,8 +8,9 @@ export type PokemonData = {
     types: string[];
     stats: Record<string, number>;
     sprites: {
+        sprite: string | undefined | null;
         default: string | undefined | null;
-        shiny: string | undefined | null;
+        defaultShiny: string | undefined | null;
     };
     evolutions: {
         name: string;

@@ -47,8 +47,9 @@ const mapPokemonData = (parsed: PokemonDetails, generation: number): PokemonData
         parsed.stats.map((s) => [s.stat.name, s.base_stat])
     ),
     sprites: {
+        sprite: parsed.sprites.front_default,
         default: parsed.sprites.other['official-artwork'].front_default,
-        shiny: parsed.sprites.other['official-artwork'].front_shiny,
+        defaultShiny: parsed.sprites.other['official-artwork'].front_shiny,
     },
     evolutions: parsed.chain
         ? mapEvolutionChain(parsed.chain)
