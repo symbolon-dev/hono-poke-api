@@ -1,4 +1,13 @@
+import type { EvolutionChainType } from '../types/pokemon.js';
+
 import { z } from "zod";
+
+export const GenerationsListSchema = z.object({
+    results: z.array(z.object({
+        name: z.string(),
+        url: z.string()
+    }))
+});
 
 export const GenerationSchema = z.object({
     id: z.number(),
@@ -9,6 +18,25 @@ export const GenerationSchema = z.object({
             url: z.string(),
         })
     ),
+});
+
+const EvolutionChainSchema: z.ZodType<EvolutionChainType> = z.object({
+    species: z.object({
+        name: z.string(),
+        url: z.string(),
+    }),
+    evolution_details: z.array(
+        z.object({
+            min_level: z.number().nullable().optional(),
+        })
+    ),
+    evolves_to: z.array(
+        z.lazy(() => EvolutionChainSchema)
+    ),
+});
+
+export const EvolutionSchema = z.object({
+    chain: EvolutionChainSchema,
 });
 
 export const PokemonDetailsSchema = z.object({
@@ -40,11 +68,8 @@ export const PokemonDetailsSchema = z.object({
             })
         }),
     }),
+    chain: z.any(),
 });
 
-export const GenerationsListSchema = z.object({
-    results: z.array(z.object({
-        name: z.string(),
-        url: z.string()
-    }))
-});
+export type GenerationData = z.infer<typeof GenerationSchema>;
+export type PokemonDetails = z.infer<typeof PokemonDetailsSchema>;

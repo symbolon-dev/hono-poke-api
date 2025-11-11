@@ -1,6 +1,7 @@
-import type { GenerationData, PokemonData, PokemonDetails, QueryParams } from '../types/pokemon.js';
+import type { GenerationData, PokemonDetails } from '../schemas/pokemon.schema.js';
+import type { EvolutionNode, MappedEvolution, PokemonData, QueryParams } from '../types/pokemon.js';
 
-import { GenerationSchema, GenerationsListSchema, PokemonDetailsSchema } from '../schemas/pokemon.schema.js';
+import { GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, EvolutionSchema } from '../schemas/pokemon.schema.js';
 import { chunk } from 'lodash-es';
 import fs from 'fs/promises';
 
@@ -14,13 +15,22 @@ const fetchGenerationData = async (genId: number): Promise<GenerationData> => {
     return GenerationSchema.parse(data);
 };
 
-const fetchPokemonDetails = async (url: string): Promise<PokemonDetails | undefined> => {
+const fetchPokemon = async (url: string): Promise<PokemonDetails | undefined> => {
     try {
-        const raw = await fetch(url.replace('pokemon-species', 'pokemon'));
+        const rawPokemons = await fetch(url);
+        const dataPokemons = await rawPokemons.json();
+        
+        const rawDetails = await fetch((dataPokemons as any).varieties[0].pokemon.url);
+        const dataDetails = await rawDetails.json();
+        const details = PokemonDetailsSchema.parse(dataDetails);
+
+        const raw = await fetch((dataPokemons as any).evolution_chain.url);
         const data = await raw.json();
-        return PokemonDetailsSchema.parse(data);
+        const evolutions = EvolutionSchema.parse(data);
+
+        return { ...details, ...evolutions };
     } catch (error) {
-        console.warn(`⚠️  Fehler beim Laden von ${url}:`, error);
+        console.warn(`⚠️  Fehler beim Laden der Details von ${url}:`, error);
         return undefined;
     }
 };
@@ -39,8 +49,33 @@ const mapPokemonData = (parsed: PokemonDetails, generation: number): PokemonData
     sprites: {
         default: parsed.sprites.other['official-artwork'].front_default,
         shiny: parsed.sprites.other['official-artwork'].front_shiny,
-    }
+    },
+    evolutions: parsed.chain
+        ? mapEvolutionChain(parsed.chain)
+        : [],
+
 });
+
+const mapEvolutionChain = (
+    chain: EvolutionNode,
+    minLevel?: number
+): MappedEvolution[] => {
+    const current: MappedEvolution = {
+        name: chain.species.name,
+        url: chain.species.url,
+        minLevel,
+    };
+
+    if (!chain.evolves_to?.length) {
+        return [current];
+    }
+
+    const evolutions = chain.evolves_to.flatMap((evo: EvolutionNode) =>
+        mapEvolutionChain(evo, evo.evolution_details?.[0]?.min_level)
+    );
+
+    return [current, ...evolutions];
+};
 
 const fetchPokemonBatch = async (
     speciesList: Array<{ name: string; url: string }>,
@@ -48,11 +83,11 @@ const fetchPokemonBatch = async (
 ): Promise<PokemonData[]> => {
     const results = await Promise.all(
         speciesList.map(async species => {
-            const details = await fetchPokemonDetails(species.url);
-            return details ? mapPokemonData(details, generation) : undefined;
+            const pokemon = await fetchPokemon(species.url);
+            return pokemon ? mapPokemonData(pokemon, generation) : undefined;
         })
     );
-    
+
     return results.filter((p): p is PokemonData => p !== undefined);
 };
 
@@ -91,6 +126,25 @@ const loadAllPokemon = async (): Promise<PokemonData[]> => {
     return allPokemon;
 };
 
+export const loadOrFetchPokemon = async (): Promise<PokemonData[]> => {
+    try {
+        const cached = await fs.readFile(CACHE_FILE, 'utf-8');
+        console.log('📦 Cache geladen');
+        return JSON.parse(cached) as PokemonData[];
+    } catch {
+        const data = await loadAllPokemon();
+
+        const sortedData = [...data].sort((a, b) => a.id - b.id);
+
+        await fs.writeFile(
+            CACHE_FILE, 
+            JSON.stringify(sortedData, undefined, 4)
+        );
+        console.log('💾 Cache gespeichert');
+        return data;
+    }
+};
+
 // --- Query Functions ---
 const byNameSearch = (searchTerm: string) => (pokemon: PokemonData): boolean =>
     pokemon.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -120,23 +174,4 @@ export const queryPokemon = (params: QueryParams) => (pokemonList: PokemonData[]
     ];
     
     return filters.reduce((result, applyFilter) => applyFilter(result), pokemonList);
-};
-
-export const loadOrFetchPokemon = async (): Promise<PokemonData[]> => {
-    try {
-        const cached = await fs.readFile(CACHE_FILE, 'utf-8');
-        console.log('📦 Cache geladen');
-        return JSON.parse(cached) as PokemonData[];
-    } catch {
-        const data = await loadAllPokemon();
-
-        const sortedData = [...data].sort((a, b) => a.id - b.id);
-
-        await fs.writeFile(
-            CACHE_FILE, 
-            JSON.stringify(sortedData, undefined, 4)
-        );
-        console.log('💾 Cache gespeichert');
-        return data;
-    }
 };

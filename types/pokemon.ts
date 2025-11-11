@@ -1,10 +1,3 @@
-import { z } from "zod";
-
-import { GenerationSchema, PokemonDetailsSchema } from "../schemas/pokemon.schema.js";
-
-export type GenerationData = z.infer<typeof GenerationSchema>;
-export type PokemonDetails = z.infer<typeof PokemonDetailsSchema>;
-
 export type PokemonData = {
     id: number;
     name: string;
@@ -18,6 +11,32 @@ export type PokemonData = {
         default: string | undefined | null;
         shiny: string | undefined | null;
     };
+    evolutions: {
+        name: string;
+        url: string;
+        minLevel: number | undefined;
+    }[]
+};
+
+export type EvolutionChainType = {
+    species: { name: string; url: string };
+    evolution_details: { min_level?: number | null | undefined }[];
+    evolves_to: EvolutionChainType[];
+};
+
+export type EvolutionNode = {
+    species: {
+        name: string;
+        url: string;
+    };
+    evolution_details: { min_level?: number }[];
+    evolves_to: EvolutionNode[];
+};
+
+export type MappedEvolution = {
+    name: string;
+    url: string;
+    minLevel: number | undefined;
 };
 
 export type QueryParams = {
