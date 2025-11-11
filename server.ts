@@ -1,16 +1,30 @@
-import { app } from "./app.js";
-
-import { loadOrFetchPokemon } from './servives/pokemon.services.js';
+import app from './app.js'
+import { loadOrFetchPokemon } from './services/pokemon.services.js'
 
 const startServer = async () => {
-    const port = process.env.PORT || 8000;
+    const port = process.env.PORT || 8000
+    const pokemonCache = await loadOrFetchPokemon()
+    
+    app.use('*', async (c, next) => {
+        c.set('pokemonCache', pokemonCache)
+        await next()
+    })
 
-    const pokemonCache = await loadOrFetchPokemon();
+    // Bun (default)
+    Bun.serve({
+        fetch: app.fetch,
+        port: port
+    })
 
-    app.listen(port, () => {
-        console.log(`✅ API bereit unter http://localhost:${port}`);
-        console.log(`📊 ${pokemonCache.length} Pokémon im Cache`);
-    });
-};
+    // Deno (uncomment to use)
+    // Deno.serve({ port: ProcessEnv.PORT }, app.fetch)
 
-startServer().catch(err => console.error("❌ Fehler beim Start:", err));
+    // Node.js (uncomment to use, requires: npm i @hono/node-server)
+    // import { serve } from '@hono/node-server'
+    // serve({ fetch: app.fetch, port: ProcessEnv.PORT })
+    
+    console.log(`✅ API bereit unter http://localhost:${port}`)
+    console.log(`📊 ${pokemonCache.length} Pokémon im Cache`)
+}
+
+startServer().catch(err => console.error('❌ Fehler beim Start:', err))

@@ -1,12 +1,8 @@
-import type { Router } from 'express';
-
-import express from 'express';
+import { Hono } from 'hono';
 
 import { getPokemon, getPokemonById } from '../controllers/pokemon.controller.js';
 
-const router: Router = express.Router();
+export const pokemonRoutes = new Hono();
 
-router.get('/', getPokemon)
-router.get('/:id', getPokemonById)
-
-export default router;
+pokemonRoutes.get('/', (c) => getPokemon(c));
+pokemonRoutes.get('/:id', (c) => getPokemonById(c));

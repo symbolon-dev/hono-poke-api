@@ -1,11 +1,17 @@
-import type { Express } from 'express';
+import type { PokemonData } from './types/pokemon.js';
 
-import express from "express";
-import pokemonRoutes from "./routes/pokemon.routes.js";
+import { Hono } from 'hono';
 
-export const app: Express = express();
+import { pokemonRoutes } from "./routes/pokemon.routes.js";
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+type AppVariables = {
+    Variables: {
+        pokemonCache: PokemonData[],
+    }
+}
 
-app.use("/api/pokemon", pokemonRoutes);
+const app = new Hono<AppVariables>()
+
+app.route("/api/pokemon", pokemonRoutes);
+
+export default app;
