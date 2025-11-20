@@ -8,7 +8,7 @@ type RateLimiterOptions = {
 export const rateLimiter = (options: RateLimiterOptions = {}) => {
     let requests = new Map<string, number[]>()
 
-    const windowMs = options.windowMs ?? 15 * 60 * 1000
+    const windowMs = options.windowMs ?? 15 * 60 * 1000 // 15 minutes
     const max = options.max ?? 100
 
     const prune = () => {
@@ -22,7 +22,7 @@ export const rateLimiter = (options: RateLimiterOptions = {}) => {
         )
     }
 
-    setInterval(prune, 5 * 60 * 1000)
+    setInterval(prune, 5 * 60 * 1000) // 5 minutes
 
     return async (c: Context, next: Next) => {
         const ip = c.req.header("x-forwarded-for")?.split(",")[0]
