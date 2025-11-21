@@ -9,23 +9,57 @@ import { chunk } from 'lodash-es';
 
 const BATCH_SIZE = 25;
 
-const fetchGenerationData = async (genId: number): Promise<GenerationData> => {
-    const raw = await fetch(`https://pokeapi.co/api/v2/generation/${genId}`);
-    const data = await raw.json();
-    return GenerationSchema.parse(data);
+const fetchJson = async <T>(url: string): Promise<T | undefined> => {
+    try {
+        let res = await fetch(url);
+        if (!res.ok) {
+            console.warn(`HTTP ${res.status} bei ${url}`);
+            if (res.status === 500) {
+                const fallbackUrl = url.replace(/\/$/, '');
+                if (fallbackUrl !== url) {
+                    console.warn(`⚠️ Retry ohne trailing slash für ${url}`);
+                    res = await fetch(fallbackUrl);
+                }
+            }
+        }
+
+        if (!res.ok) {
+            console.warn(`HTTP ${res.status} bei ${url} (nach fallback)`);
+            return undefined;
+        }
+
+
+        const text = await res.text();
+        try {
+            return JSON.parse(text) as T;
+        } catch (err) {
+            console.warn(`Fehler beim Parsen von JSON für ${url}:`, err);
+            return undefined;
+        }
+    } catch (err) {
+        console.warn(`Fetch-Fehler für ${url}:`, err);
+        return undefined;
+    }
+}
+
+const fetchGenerationData = async (genId: number): Promise<GenerationData | undefined> => {
+    try {
+        const data = await fetchJson(`https://pokeapi.co/api/v2/generation/${genId}`);
+        return GenerationSchema.parse(data);
+    } catch (error) {
+        console.warn('⚠️  Fehler beim Laden der Generationen', error);
+        return undefined;
+    }
 };
 
 const fetchPokemon = async (url: string): Promise<PokemonDetails | undefined> => {
     try {
-        const rawPokemons = await fetch(url);
-        const dataPokemons = await rawPokemons.json();
+        const dataPokemons = await fetchJson(url);
         
-        const rawDetails = await fetch((dataPokemons as any).varieties[0].pokemon.url);
-        const dataDetails = await rawDetails.json();
+        const dataDetails = await fetchJson((dataPokemons as any).varieties[0].pokemon.url);
         const details = PokemonDetailsSchema.parse(dataDetails);
 
-        const raw = await fetch((dataPokemons as any).evolution_chain.url);
-        const data = await raw.json();
+        const data = await fetchJson((dataPokemons as any).evolution_chain.url);
         const evolutions = EvolutionSchema.parse(data);
 
         return { ...details, ...evolutions };
@@ -51,7 +85,7 @@ const fetchPokemonBatch = async (
 
 const loadGenerationPokemon = async (genId: number): Promise<PokemonData[]> => { 
     const genData = await fetchGenerationData(genId);
-    const batches = chunk(genData.pokemon_species, BATCH_SIZE);
+    const batches = chunk(genData?.pokemon_species, BATCH_SIZE);
 
     const allPokemon = await Promise.all(
         batches.map(async (batch, index) => {
@@ -67,8 +101,7 @@ const loadGenerationPokemon = async (genId: number): Promise<PokemonData[]> => {
 export const loadAllPokemon = async (): Promise<PokemonData[]> => {
     console.log("🔄 Lade alle Pokémon aus allen Generationen...");
 
-    const rawGenerations = await fetch('https://pokeapi.co/api/v2/generation/');
-    const data = await rawGenerations.json();
+    const data = await fetchJson('https://pokeapi.co/api/v2/generation/');
     const generations = GenerationsListSchema.parse(data);
 
     const allGenerations = await Promise.all(
