@@ -8,9 +8,9 @@ export type PokemonData = {
     types: string[];
     stats: Record<string, number>;
     sprites: {
-        sprite: string | undefined | null;
-        default: string | undefined | null;
-        defaultShiny: string | undefined | null;
+        sprite: string | null;
+        default: string | null;
+        defaultShiny: string | null;
     };
     evolutions: {
         name: string;
@@ -21,7 +21,7 @@ export type PokemonData = {
 
 export type EvolutionChainType = {
     species: { name: string; url: string };
-    evolution_details: { min_level?: number | null | undefined }[];
+    evolution_details: { min_level?: number | null }[];
     evolves_to: EvolutionChainType[];
 };
 

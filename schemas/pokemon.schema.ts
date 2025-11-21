@@ -27,7 +27,7 @@ const EvolutionChainSchema: z.ZodType<EvolutionChainType> = z.object({
     }),
     evolution_details: z.array(
         z.object({
-            min_level: z.number().nullable().optional(),
+            min_level: z.number().nullable(),
         })
     ),
     evolves_to: z.array(
@@ -61,11 +61,11 @@ export const PokemonDetailsSchema = z.object({
         })
     ),
     sprites: z.object({
-        front_default: z.string().nullish(),
+        front_default: z.string().nullable(),
         other: z.object({
             'official-artwork': z.object({
-                front_default: z.string().nullish(),
-                front_shiny: z.string().nullish()
+                front_default: z.string().nullable(),
+                front_shiny: z.string().nullable()
             })
         }),
     }),
