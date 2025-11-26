@@ -1,5 +1,5 @@
 import type { Context } from 'hono';
-import type { PokemonData } from '../types/pokemon.js';
+import type { PokemonData, QueryParams } from '../types/pokemon.js';
 
 import { queryPokemon } from '../services/filters.js';
 
@@ -10,11 +10,19 @@ export const getPokemon = (c: Context) => {
         console.error('Pokemon cache ist nicht initializiert!')
     }
 
+    const params: QueryParams = {
+        search: c.req.query('name') || c.req.query('id'), 
+        types: c.req.queries('types'), 
+        generation: Number(c.req.query('generation')),
+        sort: c.req.query('sort') as "id" | "name" | undefined,
+        order: c.req.query('order') as "asc" | "desc" | undefined
+    }
+
+    const filtered = queryPokemon(params)(pokemonCache)
+
     const page = Number(c.req.query('page')) || 1
     const limit = Number(c.req.query('limit')) || 20
     const offset = (page - 1) * limit
-
-    const filtered = queryPokemon(c.req.query())(pokemonCache)
     const paginated = filtered.slice(offset, offset + limit)
 
     return c.json({

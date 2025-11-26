@@ -41,9 +41,9 @@ export type MappedEvolution = {
 };
 
 export type QueryParams = {
-    search?: string;
-    type?: string;
-    generation?: string;
-    sort?: 'id' | 'name';
-    order?: 'asc' | 'desc';
+    search?: string | undefined;
+    types?: string | string[] | undefined;
+    generation?: number | undefined;
+    sort?: 'id' | 'name' | undefined;
+    order?: 'asc' | 'desc' | undefined;
 };

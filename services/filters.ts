@@ -1,10 +1,17 @@
 import type { PokemonData, QueryParams } from '../types/pokemon.js';
 
-const byNameSearch = (searchTerm: string) => (pokemon: PokemonData): boolean =>
-    pokemon.name.toLowerCase().includes(searchTerm.toLowerCase());
+const bySearchTerm = (searchTerm: string) => (pokemon: PokemonData): boolean => {
+    const term = searchTerm.toLowerCase();
+    return pokemon.name.toLowerCase().includes(term) || pokemon.id.toString() === term;
+};
 
-const byType = (typeName: string) => (pokemon: PokemonData): boolean =>
-    pokemon.types.some(type => type.toLowerCase() === typeName.toLowerCase());
+const byType = (typeInput: string | string[]) => (pokemon: PokemonData): boolean => {
+    const typesToFilter = Array.isArray(typeInput) ? typeInput : [typeInput];
+    
+    return typesToFilter.every(searchType => 
+        pokemon.types.some(pType => pType.toLowerCase() === searchType.toLowerCase())
+    );
+};
 
 const byGeneration = (generationNumber: number) => (pokemon: PokemonData): boolean =>
     pokemon.generation === generationNumber;
@@ -18,11 +25,11 @@ const sortBy = (field: "id" | "name", direction: "asc" | "desc" = "asc") => (pok
 };
 
 export const queryPokemon = (params: QueryParams) => (pokemonList: PokemonData[]): PokemonData[] => {
-    const { search, type, generation, sort, order } = params;
+    const { search, types, generation, sort, order } = params;
     
     const filters: Array<(list: PokemonData[]) => PokemonData[]> = [
-        search ? (list) => list.filter(byNameSearch(search)) : (list) => list,
-        type ? (list) => list.filter(byType(type)) : (list) => list,
+        search ? (list) => list.filter(bySearchTerm(search)) : (list) => list,
+        types ? (list) => list.filter(byType(types)) : (list) => list,
         generation ? (list) => list.filter(byGeneration(Number(generation))) : (list) => list,
         sort ? sortBy(sort, order) : (list) => list,
     ];
