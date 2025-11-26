@@ -1,15 +1,17 @@
 import app from './app.js'
+
+import { pokemonRoutes } from './routes/pokemon.routes.js'
 import { loadOrFetchPokemon } from './services/pokemon.services.js'
-import { rateLimiter } from './middleware/rate-limiter.js'
 
 import { cors } from 'hono/cors'
 import { secureHeaders } from 'hono/secure-headers'
 import { logger } from 'hono/logger'
+import { rateLimiter } from './middleware/rate-limiter.js'
 
 const startServer = async () => {
     const port = process.env.PORT || 8000
     const pokemonCache = await loadOrFetchPokemon()
-    
+
     app.use('*', logger())
     app.use('*', secureHeaders())
     app.use('*', cors({
@@ -24,6 +26,7 @@ const startServer = async () => {
         c.set('pokemonCache', pokemonCache)
         await next()
     })
+    app.route("/api/pokemon", pokemonRoutes);
 
     app.onError((err, c) => {
         console.error('Error:', err)
