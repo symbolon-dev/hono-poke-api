@@ -1,6 +1,6 @@
 import type { PokemonData } from './types/pokemon.js';
 
-import { Hono } from 'hono';
+import { OpenAPIHono } from '@hono/zod-openapi'
 
 type AppVariables = {
     Variables: {
@@ -8,5 +8,5 @@ type AppVariables = {
     }
 }
 
-const app = new Hono<AppVariables>()
+const app = new OpenAPIHono<AppVariables>()
 export default app;

@@ -1,4 +1,5 @@
 import app from './app.js'
+import { swaggerUI } from '@hono/swagger-ui'
 
 import { pokemonRoutes } from './routes/pokemon.routes.js'
 import { loadOrFetchPokemon } from './services/pokemon.services.js'
@@ -27,6 +28,17 @@ const startServer = async () => {
         await next()
     })
     app.route("/api/pokemon", pokemonRoutes);
+
+    app.doc('/doc', {
+        openapi: '3.0.0',
+        info: {
+            version: '1.0.0',
+            title: 'Pokemon API',
+            description: 'API for browsing and filtering Pokemon data'
+        }
+    })
+
+    app.get('/ui', swaggerUI({ url: '/doc' }))
 
     app.onError((err, c) => {
         console.error('Error:', err)
