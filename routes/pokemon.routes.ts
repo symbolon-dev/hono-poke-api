@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { getPokemon, getPokemonById } from '../controllers/pokemon.controller.js';
+import { getPokemon, getPokemonById, getTypes, getGenerations } from '../controllers/pokemon.controller.js';
 import { PokemonDataSchema } from '../schemas/pokemon.schema.js';
 
 export const pokemonRoutes = new OpenAPIHono();
@@ -41,6 +41,41 @@ const getPokemonRoute = createRoute({
     }
 });
 
+const getTypesRoute = createRoute({
+    method: 'get',
+    path: '/types',
+    responses: {
+        200: {
+        content: {
+            'application/json': {
+                schema: z.object({
+                    types: z.array(z.string())
+                })
+            }
+        },
+        description: 'Retrieve all available Pokemon types'
+        }
+    }
+});
+
+const getGenerationsRoute = createRoute({
+    method: 'get',
+    path: '/generations',
+    responses: {
+        200: {
+        content: {
+            'application/json': {
+                schema: z.object({
+                    generations: z.array(z.number())
+                })
+            }
+        },
+        description: 'Retrieve all available Pokemon generations'
+        }
+    }
+});
+
+
 const getPokemonByIdRoute = createRoute({
     method: 'get',
     path: '/{id}',
@@ -72,4 +107,6 @@ const getPokemonByIdRoute = createRoute({
 });
 
 pokemonRoutes.openapi(getPokemonRoute, (c) => getPokemon(c));
+pokemonRoutes.openapi(getTypesRoute, (c) => getTypes(c));
+pokemonRoutes.openapi(getGenerationsRoute, (c) => getGenerations(c));
 pokemonRoutes.openapi(getPokemonByIdRoute, (c) => getPokemonById(c));

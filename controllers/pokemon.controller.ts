@@ -50,3 +50,43 @@ export const getPokemonById = (c: Context) => {
 
     return c.json(result, 200)
 }
+
+export const getTypes = (c: Context) => {
+    const pokemonCache: PokemonData[] = c.get('pokemonCache');
+    
+    if (!pokemonCache || pokemonCache.length === 0) {
+        console.error('Pokemon cache ist nicht initialisiert!');
+        return c.json({ types: [] }, 200);
+    }
+
+    const typesSet = new Set<string>();
+    
+    pokemonCache.map((pokemon: PokemonData) => {
+        pokemon.types.forEach((type: string) => {
+            typesSet.add(type);
+        });
+    });
+
+    const types = Array.from(typesSet).sort();
+
+    return c.json({ types }, 200);
+};
+
+export const getGenerations = (c: Context) => {
+    const pokemonCache: PokemonData[] = c.get('pokemonCache');
+
+    if (!pokemonCache || pokemonCache.length === 0) {
+        console.error('Pokemon cache ist nicht initialisiert!');
+        return c.json({ generations: [] }, 200);
+    }
+
+    const generationsSet = new Set<number>();
+    
+    pokemonCache.map((pokemon: PokemonData) => {
+        generationsSet.add(pokemon.generation);
+    });
+
+    const generations = Array.from(generationsSet).sort((a, b) => a - b);
+
+    return c.json({ generations }, 200);
+};
