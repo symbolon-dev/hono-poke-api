@@ -40,6 +40,9 @@ const startServer = async () => {
 
     app.get('/ui', swaggerUI({ url: '/doc' }))
 
+    // Dummy route for favicon
+    app.get('/favicon.ico', c => c.body(null, 204))
+
     app.onError((err, c) => {
         console.error('Error:', err)
         return c.json({
