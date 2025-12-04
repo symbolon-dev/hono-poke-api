@@ -60,18 +60,10 @@ const startServer = async () => {
         }, 404)
     })
 
-    // Bun (default)
     Bun.serve({
         fetch: app.fetch,
         port: port
     })
-
-    // Deno (uncomment to use)
-    // Deno.serve({ port: ProcessEnv.PORT }, app.fetch)
-
-    // Node.js (uncomment to use, requires: npm i @hono/node-server)
-    // import { serve } from '@hono/node-server'
-    // serve({ fetch: app.fetch, port: ProcessEnv.PORT })
     
     console.log(`✅ API bereit unter http://localhost:${port}`)
     console.log(`📊 ${pokemonCache.length} Pokémon in cache`)
