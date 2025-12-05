@@ -81,21 +81,21 @@ export const PokemonDetailsSchema = z.object({
         })
     ),
     sprites: z.object({
-        front_default: z.string().nullable().openapi({ 
-            example: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png' 
+        front_default: z.string().nullable().openapi({
+            example: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png'
         }),
         other: z.object({
             'official-artwork': z.object({
-                front_default: z.string().nullable().openapi({ 
-                    example: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png' 
+                front_default: z.string().nullable().openapi({
+                    example: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png'
                 }),
-                front_shiny: z.string().nullable().openapi({ 
-                    example: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/25.png' 
+                front_shiny: z.string().nullable().openapi({
+                    example: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/25.png'
                 })
             })
         })
     }),
-    chain: z.any()
+    chain: EvolutionChainSchema
 }).openapi('PokemonDetails');
 
 export const PokemonDataSchema = z.object({
