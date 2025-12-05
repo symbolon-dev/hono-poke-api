@@ -1,5 +1,4 @@
-import type { PokemonDetails } from '@/schemas/pokemon';
-import type { EvolutionNode, MappedEvolution, PokemonData } from '@/types/pokemon';
+import type { PokemonDetails, EvolutionChain, MappedEvolution, PokemonData } from '@/types/pokemon';
 
 export const mapPokemonData = (parsed: PokemonDetails, generation: number): PokemonData => ({
     id: parsed.id,
@@ -24,20 +23,20 @@ export const mapPokemonData = (parsed: PokemonDetails, generation: number): Poke
 });
 
 const mapEvolutionChain = (
-    chain: EvolutionNode,
-    minLevel?: number
+    chain: EvolutionChain,
+    minLevel?: number | null
 ): MappedEvolution[] => {
     const current: MappedEvolution = {
         name: chain.species.name,
         url: chain.species.url,
-        minLevel,
+        minLevel: minLevel ?? undefined,
     };
 
     if (!chain.evolves_to?.length) {
         return [current];
     }
 
-    const evolutions = chain.evolves_to.flatMap((evo: EvolutionNode) =>
+    const evolutions = chain.evolves_to.flatMap((evo: EvolutionChain) =>
         mapEvolutionChain(evo, evo.evolution_details?.[0]?.min_level)
     );
 

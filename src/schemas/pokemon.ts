@@ -1,4 +1,3 @@
-import type { EvolutionChainType } from '@/types/pokemon';
 import { z } from '@hono/zod-openapi';
 
 export const GenerationsListSchema = z.object({
@@ -21,14 +20,20 @@ export const GenerationSchema = z.object({
     )
 }).openapi('Generation');
 
-const EvolutionChainSchema: z.ZodType<EvolutionChainType> = z.object({
+type EvolutionChainType = {
+    species: { name: string; url: string };
+    evolution_details: { min_level?: number | null | undefined }[];
+    evolves_to: EvolutionChainType[];
+};
+
+export const EvolutionChainSchema: z.ZodType<EvolutionChainType> = z.object({
     species: z.object({
         name: z.string().openapi({ example: 'bulbasaur' }),
         url: z.string().openapi({ example: 'https://pokeapi.co/api/v2/pokemon-species/1/' })
     }),
     evolution_details: z.array(
         z.object({
-            min_level: z.number().nullable().openapi({ example: 16 })
+            min_level: z.number().nullable().optional().openapi({ example: 16 })
         })
     ),
     evolves_to: z.array(
@@ -110,6 +115,16 @@ export const PokemonDataSchema = z.object({
     ).openapi({ description: 'List of possible evolutions' })
 }).openapi('PokemonData');
 
-export type PokemonData = z.infer<typeof PokemonDataSchema>;
-export type GenerationData = z.infer<typeof GenerationSchema>;
-export type PokemonDetails = z.infer<typeof PokemonDetailsSchema>;
+export const QueryParamsSchema = z.object({
+    search: z.string().optional(),
+    types: z.union([z.string(), z.array(z.string())]).optional(),
+    generation: z.number().optional(),
+    sort: z.enum(['id', 'name']).optional(),
+    order: z.enum(['asc', 'desc']).optional()
+});
+
+export const MappedEvolutionSchema = z.object({
+    name: z.string(),
+    url: z.string(),
+    minLevel: z.number().optional()
+});

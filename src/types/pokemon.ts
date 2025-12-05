@@ -1,49 +1,16 @@
-export type PokemonData = {
-    id: number;
-    name: string;
-    height: number;
-    weight: number;
-    generation: number;
-    is_default: boolean;
-    types: string[];
-    stats: Record<string, number>;
-    sprites: {
-        sprite: string | null;
-        default: string | null;
-        defaultShiny: string | null;
-    };
-    evolutions: {
-        name: string;
-        url: string;
-        minLevel: number | undefined;
-    }[]
-};
+import type { z } from 'zod';
+import {
+    PokemonDataSchema,
+    GenerationSchema,
+    PokemonDetailsSchema,
+    EvolutionChainSchema,
+    MappedEvolutionSchema,
+    QueryParamsSchema
+} from '@/schemas/pokemon';
 
-export type EvolutionChainType = {
-    species: { name: string; url: string };
-    evolution_details: { min_level?: number | null }[];
-    evolves_to: EvolutionChainType[];
-};
-
-export type EvolutionNode = {
-    species: {
-        name: string;
-        url: string;
-    };
-    evolution_details: { min_level?: number }[];
-    evolves_to: EvolutionNode[];
-};
-
-export type MappedEvolution = {
-    name: string;
-    url: string;
-    minLevel: number | undefined;
-};
-
-export type QueryParams = {
-    search?: string | undefined;
-    types?: string | string[] | undefined;
-    generation?: number | undefined;
-    sort?: 'id' | 'name' | undefined;
-    order?: 'asc' | 'desc' | undefined;
-};
+export type PokemonData = z.infer<typeof PokemonDataSchema>;
+export type GenerationData = z.infer<typeof GenerationSchema>;
+export type PokemonDetails = z.infer<typeof PokemonDetailsSchema>;
+export type EvolutionChain = z.infer<typeof EvolutionChainSchema>;
+export type MappedEvolution = z.infer<typeof MappedEvolutionSchema>;
+export type QueryParams = z.infer<typeof QueryParamsSchema>;
