@@ -2,11 +2,11 @@
     "name": "hono-poke-api",
     "version": "1.0.0",
     "description": "",
-    "main": "server.ts",
+    "main": "src/index.ts",
     "type": "module",
     "scripts": {
-        "dev": "bun run server.ts",
-        "start": "bun run server.ts"
+        "dev": "bun run src/index.ts",
+        "start": "bun run src/index.ts"
     },
     "keywords": [],
     "author": "",

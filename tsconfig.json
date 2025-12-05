@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
-        "rootDir": "./",
+        "rootDir": "./src",
         "outDir": "./dist",
-        "module": "nodenext",
+        "module": "NodeNext",
         "target": "esnext",
         "types": ["bun"],
         "lib": ["esnext"],
@@ -17,8 +17,9 @@
         "noUncheckedSideEffectImports": true,
         "moduleDetection": "force",
         "skipLibCheck": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true
     },
-    "include": ["**/*.ts"],
+    "include": ["src/**/*.ts"],
     "exclude": ["node_modules", "dist"]
 }
