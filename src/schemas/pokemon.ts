@@ -42,7 +42,7 @@ export const EvolutionChainSchema: z.ZodType<EvolutionChainType> = z.object({
 });
 
 export const EvolutionSchema = z.object({
-    chain: EvolutionChainSchema
+    chain: EvolutionChainSchema.optional()
 }).openapi('Evolution');
 
 export const PokemonSpeciesSchema = z.object({
@@ -95,7 +95,7 @@ export const PokemonDetailsSchema = z.object({
             })
         })
     }),
-    chain: EvolutionChainSchema
+    chain: EvolutionChainSchema.optional()
 }).openapi('PokemonDetails');
 
 export const PokemonDataSchema = z.object({
