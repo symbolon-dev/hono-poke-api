@@ -1,5 +1,5 @@
-import { createApp } from '@/app.js';
-import { loadOrFetchPokemon } from '@/services/pokemon.js';
+import { createApp } from '@/app';
+import { loadOrFetchPokemon } from '@/services/pokemon';
 
 const startServer = async () => {
     const port = process.env.PORT || 8000;

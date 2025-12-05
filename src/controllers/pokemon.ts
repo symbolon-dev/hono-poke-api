@@ -1,7 +1,7 @@
 import type { Context } from 'hono';
-import type { PokemonData, QueryParams } from '@/types/pokemon.js';
+import type { PokemonData, QueryParams } from '@/types/pokemon';
 
-import { queryPokemon } from '@/utils/filters.js';
+import { queryPokemon } from '@/utils/filters';
 
 export const getPokemon = (c: Context) => {
     const pokemonCache: PokemonData[] = c.get('pokemonCache')

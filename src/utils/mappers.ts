@@ -1,5 +1,5 @@
-import type { PokemonDetails } from '@/schemas/pokemon.js';
-import type { EvolutionNode, MappedEvolution, PokemonData } from '@/types/pokemon.js';
+import type { PokemonDetails } from '@/schemas/pokemon';
+import type { EvolutionNode, MappedEvolution, PokemonData } from '@/types/pokemon';
 
 export const mapPokemonData = (parsed: PokemonDetails, generation: number): PokemonData => ({
     id: parsed.id,

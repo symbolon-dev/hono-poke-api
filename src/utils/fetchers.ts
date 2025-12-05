@@ -1,9 +1,9 @@
-import type { GenerationData, PokemonDetails } from '@/schemas/pokemon.js';
-import type { PokemonData } from '@/types/pokemon.js';
+import type { GenerationData, PokemonDetails } from '@/schemas/pokemon';
+import type { PokemonData } from '@/types/pokemon';
 
-import { GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, EvolutionSchema } from '@/schemas/pokemon.js';
+import { GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, EvolutionSchema } from '@/schemas/pokemon';
 
-import { mapPokemonData } from '@/utils/mappers.js';
+import { mapPokemonData } from '@/utils/mappers';
 
 import { chunk } from 'lodash-es';
 

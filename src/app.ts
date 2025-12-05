@@ -1,11 +1,11 @@
-import type { PokemonData } from '@/types/pokemon.js';
+import type { PokemonData } from '@/types/pokemon';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { swaggerUI } from '@hono/swagger-ui';
 import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
 import { logger } from 'hono/logger';
-import { rateLimiter } from '@/middleware/rate-limiter.js';
-import { pokemonRoutes } from '@/routes/pokemon.js';
+import { rateLimiter } from '@/middleware/rate-limiter';
+import { pokemonRoutes } from '@/routes/pokemon';
 
 type AppVariables = {
     Variables: {

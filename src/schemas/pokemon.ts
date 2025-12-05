@@ -1,4 +1,4 @@
-import type { EvolutionChainType } from '@/types/pokemon.js';
+import type { EvolutionChainType } from '@/types/pokemon';
 import { z } from '@hono/zod-openapi';
 
 export const GenerationsListSchema = z.object({
