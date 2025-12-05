@@ -32,6 +32,9 @@ export const createApp = (pokemonCache: PokemonData[]) => {
         await next();
     });
 
+    // Health check
+    app.get('/health', (c) => c.json({ status: 'ok', timestamp: Date.now() }));
+
     // Routes
     app.route('/api/pokemon', pokemonRoutes);
 
