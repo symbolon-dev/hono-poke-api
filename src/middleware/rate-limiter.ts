@@ -5,6 +5,7 @@ type RateLimiterOptions = {
     max?: number
 }
 
+ // Simple in-memory rate limiter - for production use Redis-based solution
 export const rateLimiter = (options: RateLimiterOptions = {}) => {
     let requests = new Map<string, number[]>()
 
