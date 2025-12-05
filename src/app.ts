@@ -47,6 +47,8 @@ export const createApp = (pokemonCache: PokemonData[]) => {
             description: 'API for browsing and filtering Pokemon data'
         }
     });
+
+    // Swagger UI
     app.get('/ui', swaggerUI({ url: '/doc' }));
 
     // Dummy route for favicon
