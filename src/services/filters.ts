@@ -1,4 +1,4 @@
-import type { PokemonData, QueryParams } from '../types/pokemon.js';
+import type { PokemonData, QueryParams } from '@/types/pokemon.js';
 
 const bySearchTerm = (searchTerm: string) => (pokemon: PokemonData): boolean => {
     const term = searchTerm.toLowerCase();

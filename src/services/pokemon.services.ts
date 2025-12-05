@@ -1,6 +1,6 @@
-import type { PokemonData } from '../types/pokemon.js';
+import type { PokemonData } from '@/types/pokemon.js';
 
-import { loadAllPokemon } from './fetchers.js';
+import { loadAllPokemon } from '@/services/fetchers.js';
 
 import fs from 'fs/promises';
 
