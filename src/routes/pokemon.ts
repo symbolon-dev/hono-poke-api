@@ -1,8 +1,9 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
-import { getPokemon, getPokemonById, getTypes, getGenerations } from '@/controllers/pokemon';
+
+import { getGenerations,getPokemon, getPokemonById, getTypes } from '@/controllers/pokemon';
 import { PokemonDataSchema } from '@/schemas/pokemon';
 
-export const pokemonRoutes = new OpenAPIHono();
+export const pokemonRoutes: OpenAPIHono = new OpenAPIHono();
 
 const getPokemonRoute = createRoute({
     method: 'get',

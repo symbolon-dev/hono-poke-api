@@ -1,4 +1,4 @@
-import type { PokemonDetails, EvolutionChain, MappedEvolution, PokemonData } from '@/types/pokemon';
+import type { EvolutionChain, MappedEvolution, PokemonData,PokemonDetails } from '@/types/pokemon';
 
 export const mapPokemonData = (parsed: PokemonDetails, generation: number): PokemonData => ({
     id: parsed.id,

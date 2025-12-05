@@ -1,11 +1,8 @@
-import type { GenerationData, PokemonDetails } from '@/schemas/pokemon';
-import type { PokemonData } from '@/types/pokemon';
-
-import { GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, EvolutionSchema } from '@/schemas/pokemon';
-
-import { mapPokemonData } from '@/utils/mappers';
-
 import { chunk } from 'lodash-es';
+
+import { EvolutionSchema,GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, PokemonSpeciesSchema } from '@/schemas/pokemon';
+import type { GenerationData, PokemonData, PokemonDetails } from '@/types/pokemon';
+import { mapPokemonData } from '@/utils/mappers';
 
 const BATCH_SIZE = 25;
 
@@ -54,12 +51,16 @@ const fetchGenerationData = async (genId: number): Promise<GenerationData | unde
 
 const fetchPokemon = async (url: string): Promise<PokemonDetails | undefined> => {
     try {
-        const dataPokemons = await fetchJson(url);
-        
-        const dataDetails = await fetchJson((dataPokemons as any).varieties[0].pokemon.url);
+        const speciesData = await fetchJson(url);
+        if (!speciesData) return undefined;
+
+        const species = PokemonSpeciesSchema.parse(speciesData);
+        if (!species.varieties[0]) return undefined;
+
+        const dataDetails = await fetchJson(species.varieties[0].pokemon.url);
         const details = PokemonDetailsSchema.parse(dataDetails);
 
-        const data = await fetchJson((dataPokemons as any).evolution_chain.url);
+        const data = await fetchJson(species.evolution_chain.url);
         const evolutions = EvolutionSchema.parse(data);
 
         return { ...details, ...evolutions };

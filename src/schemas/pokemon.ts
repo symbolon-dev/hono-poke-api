@@ -45,6 +45,20 @@ export const EvolutionSchema = z.object({
     chain: EvolutionChainSchema
 }).openapi('Evolution');
 
+export const PokemonSpeciesSchema = z.object({
+    varieties: z.array(
+        z.object({
+            pokemon: z.object({
+                name: z.string().openapi({ example: 'pikachu' }),
+                url: z.string().openapi({ example: 'https://pokeapi.co/api/v2/pokemon/25/' })
+            })
+        })
+    ),
+    evolution_chain: z.object({
+        url: z.string().openapi({ example: 'https://pokeapi.co/api/v2/evolution-chain/10/' })
+    })
+}).openapi('PokemonSpecies');
+
 export const PokemonDetailsSchema = z.object({
     name: z.string().openapi({ example: 'pikachu' }),
     id: z.number().openapi({ example: 25 }),

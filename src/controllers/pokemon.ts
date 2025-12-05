@@ -1,6 +1,6 @@
 import type { Context } from 'hono';
-import type { PokemonData, QueryParams } from '@/types/pokemon';
 
+import type { PokemonData, QueryParams } from '@/types/pokemon';
 import { queryPokemon } from '@/utils/filters';
 
 export const getPokemon = (c: Context) => {

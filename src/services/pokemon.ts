@@ -1,8 +1,7 @@
-import type { PokemonData } from '@/types/pokemon';
-
-import { loadAllPokemon } from '@/utils/fetchers';
-
 import fs from 'fs/promises';
+
+import type { PokemonData } from '@/types/pokemon';
+import { loadAllPokemon } from '@/utils/fetchers';
 
 const CACHE_FILE = './pokemon-cache.json';
 
