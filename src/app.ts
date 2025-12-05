@@ -5,7 +5,7 @@ import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
 import { logger } from 'hono/logger';
 import { rateLimiter } from '@/middleware/rate-limiter.js';
-import { pokemonRoutes } from '@/routes/pokemon.routes.js';
+import { pokemonRoutes } from '@/routes/pokemon.js';
 
 type AppVariables = {
     Variables: {

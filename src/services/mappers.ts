@@ -1,4 +1,4 @@
-import type { PokemonDetails } from '@/schemas/pokemon.schema.js';
+import type { PokemonDetails } from '@/schemas/pokemon.js';
 import type { EvolutionNode, MappedEvolution, PokemonData } from '@/types/pokemon.js';
 
 export const mapPokemonData = (parsed: PokemonDetails, generation: number): PokemonData => ({
