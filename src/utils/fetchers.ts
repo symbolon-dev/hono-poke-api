@@ -3,7 +3,7 @@ import type { PokemonData } from '@/types/pokemon.js';
 
 import { GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, EvolutionSchema } from '@/schemas/pokemon.js';
 
-import { mapPokemonData } from '@/services/mappers.js';
+import { mapPokemonData } from '@/utils/mappers.js';
 
 import { chunk } from 'lodash-es';
 
