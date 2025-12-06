@@ -5,18 +5,26 @@ import type { GenerationData, PokemonData, PokemonDetails, TypeDetails } from '@
 import { mapPokemonData, mapTypeDetails } from '@/utils/mappers';
 
 const BATCH_SIZE = 25;
+const REQUEST_TIMEOUT_MS = 5000; // 5 seconds
 const POKEAPI_BASE_URL = 'https://pokeapi.co/api/v2';
+
+const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
+    const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Request timeout')), ms)
+    );
+    return Promise.race([promise, timeout]);
+};
 
 const fetchJson = async <T>(url: string): Promise<T | undefined> => {
     try {
-        let res = await fetch(url);
+        let res = await withTimeout(fetch(url), REQUEST_TIMEOUT_MS);
         if (!res.ok) {
             console.warn(`⚠️ HTTP ${res.status} at ${url}`);
             if (res.status === 500) {
                 const fallbackUrl = url.replace(/\/$/, '');
                 if (fallbackUrl !== url) {
                     console.warn(`⚠️ Retry without trailing slash for ${url}`);
-                    res = await fetch(fallbackUrl);
+                    res = await withTimeout(fetch(fallbackUrl), REQUEST_TIMEOUT_MS);
                 }
             }
         }
