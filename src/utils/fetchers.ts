@@ -5,6 +5,7 @@ import type { GenerationData, PokemonData, PokemonDetails, TypeDetails } from '@
 import { mapPokemonData, mapTypeDetails } from '@/utils/mappers';
 
 const BATCH_SIZE = 25;
+const POKEAPI_BASE_URL = 'https://pokeapi.co/api/v2';
 
 const fetchJson = async <T>(url: string): Promise<T | undefined> => {
     try {
@@ -41,7 +42,7 @@ const fetchJson = async <T>(url: string): Promise<T | undefined> => {
 
 const fetchGenerationData = async (genId: number): Promise<GenerationData | undefined> => {
     try {
-        const data = await fetchJson(`https://pokeapi.co/api/v2/generation/${genId}`);
+        const data = await fetchJson(`${POKEAPI_BASE_URL}/generation/${genId}`);
         return GenerationSchema.parse(data);
     } catch (error) {
         console.warn('⚠️ Error loading generations', error);
@@ -102,7 +103,7 @@ const loadGenerationPokemon = async (genId: number): Promise<PokemonData[]> => {
 export const loadAllPokemon = async (): Promise<PokemonData[]> => {
     console.log("ℹ️ Loading all Pokémon from all generations...");
 
-    const data = await fetchJson('https://pokeapi.co/api/v2/generation/');
+    const data = await fetchJson(`${POKEAPI_BASE_URL}/generation/`);
     const generations = GenerationsListSchema.parse(data);
 
     const allGenerations = await Promise.all(
@@ -120,7 +121,7 @@ export const loadAllPokemon = async (): Promise<PokemonData[]> => {
 
 export const fetchTypeDetails = async (typeName: string): Promise<TypeDetails | undefined> => {
     try {
-        const data = await fetchJson(`https://pokeapi.co/api/v2/type/${typeName}`);
+        const data = await fetchJson(`${POKEAPI_BASE_URL}/type/${typeName}`);
         if (!data) return undefined;
 
         const parsed = TypeDetailsApiSchema.parse(data);

@@ -5,6 +5,7 @@ import { etag } from 'hono/etag';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
 
+import { env } from '@/config/env';
 import { rateLimiter } from '@/middleware/rate-limiter';
 import { pokemonRoutes } from '@/routes/pokemon';
 import type { PokemonData } from '@/types/pokemon';
@@ -23,7 +24,7 @@ export const createApp = (pokemonCache: PokemonData[]) => {
     app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 500 }));  // 500 requests per 15 minutes
     app.use('*', secureHeaders());
     app.use('*', cors({
-        origin: ['http://localhost:3000', 'http://localhost:5173'], // Dev origins, production should be set via environment variables
+        origin: env.CORS_ORIGINS,
         credentials: true,
         maxAge: 600 // 10 minutes
     }));
@@ -78,7 +79,7 @@ export const createApp = (pokemonCache: PokemonData[]) => {
     app.onError((err, c) => {
         console.error('Error:', err);
         return c.json({
-            error: process.env.NODE_ENV === 'production'
+            error: env.NODE_ENV === 'production'
                 ? 'Internal Server Error'
                 : err.message,
             status: 500

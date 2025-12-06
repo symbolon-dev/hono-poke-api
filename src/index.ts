@@ -1,8 +1,9 @@
 import { createApp } from '@/app';
+import { env } from '@/config/env';
 import { loadOrFetchPokemon } from '@/services/pokemon';
 
 const startServer = async () => {
-    const port = process.env.PORT || 8000;
+    const port = env.PORT;
     const pokemonCache = await loadOrFetchPokemon();
 
     const app = createApp(pokemonCache);
