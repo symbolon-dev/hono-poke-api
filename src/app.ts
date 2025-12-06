@@ -21,11 +21,11 @@ export const createApp = (pokemonCache: PokemonData[]) => {
     app.use('*', logger());
     app.use('*', secureHeaders());
     app.use('*', cors({
-        origin: ['http://localhost:3000', 'http://localhost:5173'],
+        origin: ['http://localhost:3000', 'http://localhost:5173'], // Dev origins, production should be set via environment variables
         credentials: true,
         maxAge: 600
     }));
-    app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 100 }));
+    app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 500 }));
 
     // Set pokemon cache in context
     app.use('*', async (c, next) => {
