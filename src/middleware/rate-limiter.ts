@@ -38,13 +38,7 @@ export const rateLimiter = (options: RateLimiterOptions = {}) => {
         const ip = c.req.header("x-forwarded-for")?.split(",")[0]?.trim()
             ?? c.req.header("cf-connecting-ip")?.trim()
             ?? c.req.header("x-real-ip")?.trim()
-
-        if (!ip) {
-            return c.json({
-                error: "Unable to identify client",
-                status: 400
-            }, 400)
-        }
+            ?? "127.0.0.1"
 
         const now = Date.now()
         const windowStart = now - windowMs
