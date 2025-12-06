@@ -31,6 +31,22 @@ export const PokemonDataSchema = z.object({
     ).openapi({ description: 'List of possible evolutions' })
 }).openapi('PokemonData');
 
+export const PokemonListResponseSchema = z.object({
+    count: z.number().openapi({ example: 150, description: 'Total number of Pokemon matching filters' }),
+    page: z.number().openapi({ example: 1, description: 'Current page number' }),
+    limit: z.number().openapi({ example: 20, description: 'Items per page' }),
+    totalPages: z.number().openapi({ example: 8, description: 'Total number of pages' }),
+    pokemon: z.array(PokemonDataSchema).openapi({ description: 'List of Pokemon on this page' })
+}).openapi('PokemonListResponse');
+
+export const TypesResponseSchema = z.object({
+    types: z.array(z.string()).openapi({ example: ['electric', 'fire', 'water'], description: 'List of all Pokemon types' })
+}).openapi('TypesResponse');
+
+export const GenerationsResponseSchema = z.object({
+    generations: z.array(z.number()).openapi({ example: [1, 2, 3, 4, 5], description: 'List of all Pokemon generations' })
+}).openapi('GenerationsResponse');
+
 export const MappedEvolutionSchema = z.object({
     name: z.string(),
     url: z.string(),

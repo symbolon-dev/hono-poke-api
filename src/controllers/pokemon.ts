@@ -45,7 +45,7 @@ export const getPokemonById = (c: Context) => {
     const result = pokemonCache.find((pokemon: PokemonData) => pokemon.id === id)
 
     if (!result) {
-        return c.json({ message: 'Pokémon not found' }, 404)
+        return c.json({ error: 'Pokémon not found', status: 404 }, 404)
     }
 
     return c.json(result, 200)

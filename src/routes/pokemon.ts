@@ -1,7 +1,8 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
+import { createRoute, OpenAPIHono } from '@hono/zod-openapi';
 
 import { getGenerations, getPokemon, getPokemonById, getTypes } from '@/controllers/pokemon';
-import { PokemonDataSchema } from '@/schemas/pokemon';
+import { GenerationsResponseSchema, PokemonDataSchema, PokemonListResponseSchema, TypesResponseSchema } from '@/schemas/pokemon';
+import { ErrorResponseSchema, PokemonIdParamSchema, PokemonListQuerySchema } from '@/schemas/query';
 
 export const pokemonRoutes: OpenAPIHono = new OpenAPIHono();
 
@@ -9,35 +10,32 @@ const getPokemonRoute = createRoute({
     method: 'get',
     path: '/',
     request: {
-        query: z.object({
-            page: z.string().optional().openapi({ example: '1', description: 'Page number' }),
-            limit: z.string().optional().openapi({ example: '20', description: 'Items per page' }),
-            name: z.string().optional().openapi({ example: 'Pikachu', description: 'Filter by partial or full name.' }),
-            id: z.string().optional().openapi({ example: '25', description: 'Filter by exact Pokemon ID.' }),
-            types: z.string().optional().openapi({ 
-                example: 'electric', 
-                description: 'Filter by one or more types (repeated parameter is allowed).' 
-            }),
-            generation: z.string().optional().openapi({ example: '1', description: 'Filter by Generation number.' }),
-            sort: z.enum(['id', 'name']).optional().openapi({ example: 'id', description: 'Field to sort by (id or name).' }),
-            order: z.enum(['asc', 'desc']).optional().openapi({ example: 'asc', description: 'Sort direction (asc or desc).' }),
-
-        }).partial()
+        query: PokemonListQuerySchema
     },
     responses: {
         200: {
             content: {
                 'application/json': {
-                    schema: z.object({
-                        count: z.number(),
-                        page: z.number(),
-                        limit: z.number(),
-                        totalPages: z.number(),
-                        pokemon: z.array(PokemonDataSchema)
-                    })
+                    schema: PokemonListResponseSchema
                 }
             },
             description: 'Retrieve paginated and filtered list of Pokemon'
+        },
+        400: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Invalid query parameters'
+        },
+        500: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Internal server error'
         }
     }
 });
@@ -47,14 +45,20 @@ const getTypesRoute = createRoute({
     path: '/types',
     responses: {
         200: {
-        content: {
-            'application/json': {
-                schema: z.object({
-                    types: z.array(z.string())
-                })
-            }
+            content: {
+                'application/json': {
+                    schema: TypesResponseSchema
+                }
+            },
+            description: 'Retrieve all available Pokemon types'
         },
-        description: 'Retrieve all available Pokemon types'
+        500: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Internal server error'
         }
     }
 });
@@ -64,14 +68,20 @@ const getGenerationsRoute = createRoute({
     path: '/generations',
     responses: {
         200: {
-        content: {
-            'application/json': {
-                schema: z.object({
-                    generations: z.array(z.number())
-                })
-            }
+            content: {
+                'application/json': {
+                    schema: GenerationsResponseSchema
+                }
+            },
+            description: 'Retrieve all available Pokemon generations'
         },
-        description: 'Retrieve all available Pokemon generations'
+        500: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Internal server error'
         }
     }
 });
@@ -81,9 +91,7 @@ const getPokemonByIdRoute = createRoute({
     method: 'get',
     path: '/{id}',
     request: {
-        params: z.object({
-            id: z.string().openapi({ example: '25', description: 'Pokemon ID' })
-        })
+        params: PokemonIdParamSchema
     },
     responses: {
         200: {
@@ -94,15 +102,29 @@ const getPokemonByIdRoute = createRoute({
             },
             description: 'Retrieve a Pokemon by ID'
         },
+        400: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Invalid Pokemon ID'
+        },
         404: {
             content: {
                 'application/json': {
-                    schema: z.object({
-                        message: z.string().openapi({ example: 'Pokémon not found' })
-                    })
+                    schema: ErrorResponseSchema
                 }
             },
             description: 'Pokemon not found'
+        },
+        500: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Internal server error'
         }
     }
 });
