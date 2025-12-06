@@ -20,13 +20,13 @@ export const createApp = (pokemonCache: PokemonData[]) => {
 
     // Global middleware
     app.use('*', logger());
+    app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 500 }));  // 500 requests per 15 minutes
     app.use('*', secureHeaders());
     app.use('*', cors({
         origin: ['http://localhost:3000', 'http://localhost:5173'], // Dev origins, production should be set via environment variables
         credentials: true,
         maxAge: 600 // 10 minutes
     }));
-    app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 500 }));  // 500 requests per 15 minutes
 
     // Set pokemon cache in context
     app.use('*', async (c, next) => {
