@@ -52,3 +52,36 @@ export const MappedEvolutionSchema = z.object({
     url: z.string(),
     minLevel: z.number().optional()
 });
+
+export const DamageRelationsSchema = z.object({
+    doubleDamageTo: z.array(z.string()).openapi({
+        example: ['grass', 'ice', 'bug', 'steel'],
+        description: 'Types that take double damage from this type'
+    }),
+    doubleDamageFrom: z.array(z.string()).openapi({
+        example: ['water', 'ground', 'rock'],
+        description: 'Types that deal double damage to this type'
+    }),
+    halfDamageTo: z.array(z.string()).openapi({
+        example: ['fire', 'water', 'rock', 'dragon'],
+        description: 'Types that take half damage from this type'
+    }),
+    halfDamageFrom: z.array(z.string()).openapi({
+        example: ['fire', 'grass', 'ice', 'bug', 'steel', 'fairy'],
+        description: 'Types that deal half damage to this type'
+    }),
+    noDamageTo: z.array(z.string()).openapi({
+        example: [],
+        description: 'Types that take no damage from this type'
+    }),
+    noDamageFrom: z.array(z.string()).openapi({
+        example: [],
+        description: 'Types that deal no damage to this type'
+    })
+}).openapi('DamageRelations');
+
+export const TypeDetailsSchema = z.object({
+    id: z.number().openapi({ example: 10, description: 'Type ID' }),
+    name: z.string().openapi({ example: 'fire', description: 'Type name' }),
+    damageRelations: DamageRelationsSchema
+}).openapi('TypeDetails');

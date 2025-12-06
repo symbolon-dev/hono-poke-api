@@ -1,8 +1,8 @@
 import { chunk } from 'lodash-es';
 
-import { EvolutionSchema, GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, PokemonSpeciesSchema } from '@/schemas/api';
-import type { GenerationData, PokemonData, PokemonDetails } from '@/types/pokemon';
-import { mapPokemonData } from '@/utils/mappers';
+import { EvolutionSchema, GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, PokemonSpeciesSchema, TypeDetailsApiSchema } from '@/schemas/api';
+import type { GenerationData, PokemonData, PokemonDetails, TypeDetails } from '@/types/pokemon';
+import { mapPokemonData, mapTypeDetails } from '@/utils/mappers';
 
 const BATCH_SIZE = 25;
 
@@ -112,8 +112,21 @@ export const loadAllPokemon = async (): Promise<PokemonData[]> => {
     );
 
     const allPokemon = allGenerations.flat();
-    
+
     console.log(`✅ Total: ${allPokemon.length} Pokémon loaded.`);
-    
+
     return allPokemon;
+};
+
+export const fetchTypeDetails = async (typeName: string): Promise<TypeDetails | undefined> => {
+    try {
+        const data = await fetchJson(`https://pokeapi.co/api/v2/type/${typeName}`);
+        if (!data) return undefined;
+
+        const parsed = TypeDetailsApiSchema.parse(data);
+        return mapTypeDetails(parsed);
+    } catch (error) {
+        console.warn(`⚠️ Error loading type details for ${typeName}:`, error);
+        return undefined;
+    }
 };

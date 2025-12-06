@@ -97,3 +97,21 @@ export const PokemonDetailsSchema = z.object({
     }),
     chain: EvolutionChainSchema.optional()
 }).openapi('PokemonDetails');
+
+const TypeReferenceSchema = z.object({
+    name: z.string().openapi({ example: 'fire' }),
+    url: z.string().openapi({ example: 'https://pokeapi.co/api/v2/type/10/' })
+});
+
+export const TypeDetailsApiSchema = z.object({
+    id: z.number().openapi({ example: 10 }),
+    name: z.string().openapi({ example: 'fire' }),
+    damage_relations: z.object({
+        double_damage_to: z.array(TypeReferenceSchema),
+        double_damage_from: z.array(TypeReferenceSchema),
+        half_damage_to: z.array(TypeReferenceSchema),
+        half_damage_from: z.array(TypeReferenceSchema),
+        no_damage_to: z.array(TypeReferenceSchema),
+        no_damage_from: z.array(TypeReferenceSchema)
+    })
+}).openapi('TypeDetailsApi');

@@ -26,6 +26,10 @@ export const PokemonIdParamSchema = z.object({
     id: z.coerce.number().int().positive().openapi({ example: 25, description: 'Pokemon ID' })
 });
 
+export const TypeParamSchema = z.object({
+    type: z.string().openapi({ example: 'fire', description: 'Type name' })
+});
+
 export const ErrorResponseSchema = z.object({
     error: z.string(),
     status: z.number()

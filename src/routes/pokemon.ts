@@ -1,8 +1,8 @@
 import { createRoute, OpenAPIHono } from '@hono/zod-openapi';
 
-import { getGenerations, getPokemon, getPokemonById, getTypes } from '@/controllers/pokemon';
-import { GenerationsResponseSchema, PokemonDataSchema, PokemonListResponseSchema, TypesResponseSchema } from '@/schemas/pokemon';
-import { ErrorResponseSchema, PokemonIdParamSchema, PokemonListQuerySchema } from '@/schemas/query';
+import { getGenerations, getPokemon, getPokemonById, getTypeByName, getTypes } from '@/controllers/pokemon';
+import { GenerationsResponseSchema, PokemonDataSchema, PokemonListResponseSchema, TypeDetailsSchema, TypesResponseSchema } from '@/schemas/pokemon';
+import { ErrorResponseSchema, PokemonIdParamSchema, PokemonListQuerySchema, TypeParamSchema } from '@/schemas/query';
 
 export const pokemonRoutes: OpenAPIHono = new OpenAPIHono();
 
@@ -75,6 +75,40 @@ const getTypesRoute = createRoute({
                 }
             },
             description: 'Service unavailable - cache not loaded'
+        }
+    }
+});
+
+const getTypeByNameRoute = createRoute({
+    method: 'get',
+    path: '/types/{type}',
+    request: {
+        params: TypeParamSchema
+    },
+    responses: {
+        200: {
+            content: {
+                'application/json': {
+                    schema: TypeDetailsSchema
+                }
+            },
+            description: 'Retrieve detailed information about a specific type including damage relations'
+        },
+        404: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Type not found'
+        },
+        500: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Internal server error'
         }
     }
 });
@@ -163,5 +197,6 @@ const getPokemonByIdRoute = createRoute({
 
 pokemonRoutes.openapi(getPokemonRoute, getPokemon);
 pokemonRoutes.openapi(getTypesRoute, getTypes);
+pokemonRoutes.openapi(getTypeByNameRoute, getTypeByName);
 pokemonRoutes.openapi(getGenerationsRoute, getGenerations);
 pokemonRoutes.openapi(getPokemonByIdRoute, getPokemonById);

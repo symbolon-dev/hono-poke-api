@@ -1,6 +1,7 @@
 import type { Context } from 'hono';
 
 import type { PokemonData, QueryParams } from '@/types/pokemon';
+import { fetchTypeDetails } from '@/utils/fetchers';
 import { queryPokemon } from '@/utils/filters';
 
 const MAX_LIMIT = 100;
@@ -70,6 +71,18 @@ export const getTypes = (c: Context) => {
     )].sort();
 
     return c.json({ types }, 200);
+};
+
+export const getTypeByName = async (c: Context) => {
+    const typeName = c.req.param('type').toLowerCase();
+
+    const typeDetails = await fetchTypeDetails(typeName);
+
+    if (!typeDetails) {
+        return c.json({ error: 'Type not found', status: 404 }, 404);
+    }
+
+    return c.json(typeDetails, 200);
 };
 
 export const getGenerations = (c: Context) => {
