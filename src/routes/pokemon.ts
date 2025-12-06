@@ -36,6 +36,14 @@ const getPokemonRoute = createRoute({
                 }
             },
             description: 'Internal server error'
+        },
+        503: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Service unavailable - cache not loaded'
         }
     }
 });
@@ -59,6 +67,14 @@ const getTypesRoute = createRoute({
                 }
             },
             description: 'Internal server error'
+        },
+        503: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Service unavailable - cache not loaded'
         }
     }
 });
@@ -82,6 +98,14 @@ const getGenerationsRoute = createRoute({
                 }
             },
             description: 'Internal server error'
+        },
+        503: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Service unavailable - cache not loaded'
         }
     }
 });
@@ -125,11 +149,19 @@ const getPokemonByIdRoute = createRoute({
                 }
             },
             description: 'Internal server error'
+        },
+        503: {
+            content: {
+                'application/json': {
+                    schema: ErrorResponseSchema
+                }
+            },
+            description: 'Service unavailable - cache not loaded'
         }
     }
 });
 
-pokemonRoutes.openapi(getPokemonRoute, (c) => getPokemon(c));
-pokemonRoutes.openapi(getTypesRoute, (c) => getTypes(c));
-pokemonRoutes.openapi(getGenerationsRoute, (c) => getGenerations(c));
-pokemonRoutes.openapi(getPokemonByIdRoute, (c) => getPokemonById(c));
+pokemonRoutes.openapi(getPokemonRoute, getPokemon);
+pokemonRoutes.openapi(getTypesRoute, getTypes);
+pokemonRoutes.openapi(getGenerationsRoute, getGenerations);
+pokemonRoutes.openapi(getPokemonByIdRoute, getPokemonById);
