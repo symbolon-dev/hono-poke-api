@@ -8,6 +8,7 @@ export const getPokemon = (c: Context) => {
 
     if (!pokemonCache || pokemonCache.length === 0) {
         console.error('Pokemon cache ist nicht initializiert!')
+        return c.json({ error: 'Service unavailable', status: 503 }, 503)
     }
 
     const params: QueryParams = {
@@ -39,6 +40,7 @@ export const getPokemonById = (c: Context) => {
 
     if (!pokemonCache || pokemonCache.length === 0) {
         console.error('Pokemon cache ist nicht initializiert!')
+        return c.json({ error: 'Service unavailable', status: 503 }, 503)
     }
 
     const id = Number(c.req.param('id'))
@@ -53,10 +55,10 @@ export const getPokemonById = (c: Context) => {
 
 export const getTypes = (c: Context) => {
     const pokemonCache: PokemonData[] = c.get('pokemonCache');
-    
+
     if (!pokemonCache || pokemonCache.length === 0) {
         console.error('Pokemon cache ist nicht initialisiert!');
-        return c.json({ types: [] }, 200);
+        return c.json({ error: 'Service unavailable', status: 503 }, 503);
     }
 
     const types = [...new Set(
@@ -71,7 +73,7 @@ export const getGenerations = (c: Context) => {
 
     if (!pokemonCache || pokemonCache.length === 0) {
         console.error('Pokemon cache ist nicht initialisiert!');
-        return c.json({ generations: [] }, 200);
+        return c.json({ error: 'Service unavailable', status: 503 }, 503);
     }
 
     const generations = [...new Set(
