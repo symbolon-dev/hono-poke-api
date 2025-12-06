@@ -3,6 +3,9 @@ import type { Context } from 'hono';
 import type { PokemonData, QueryParams } from '@/types/pokemon';
 import { queryPokemon } from '@/utils/filters';
 
+const MAX_LIMIT = 100;
+const DEFAULT_LIMIT = 20;
+
 export const getPokemon = (c: Context) => {
     const pokemonCache: PokemonData[] = c.get('pokemonCache')
 
@@ -12,8 +15,8 @@ export const getPokemon = (c: Context) => {
     }
 
     const params: QueryParams = {
-        search: c.req.query('name') || c.req.query('id'), 
-        types: c.req.queries('types'), 
+        search: c.req.query('name') || c.req.query('id'),
+        types: c.req.queries('types'),
         generation: Number(c.req.query('generation')),
         sort: c.req.query('sort') as "id" | "name" | undefined,
         order: c.req.query('order') as "asc" | "desc" | undefined
@@ -22,7 +25,8 @@ export const getPokemon = (c: Context) => {
     const filtered = queryPokemon(params)(pokemonCache)
 
     const page = Number(c.req.query('page')) || 1
-    const limit = Number(c.req.query('limit')) || 20
+    const requestedLimit = Number(c.req.query('limit')) || DEFAULT_LIMIT
+    const limit = Math.min(requestedLimit, MAX_LIMIT)
     const offset = (page - 1) * limit
     const paginated = filtered.slice(offset, offset + limit)
 
