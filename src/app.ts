@@ -1,6 +1,7 @@
 import { swaggerUI } from '@hono/swagger-ui';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { cors } from 'hono/cors';
+import { etag } from 'hono/etag';
 import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
 
@@ -23,14 +24,32 @@ export const createApp = (pokemonCache: PokemonData[]) => {
     app.use('*', cors({
         origin: ['http://localhost:3000', 'http://localhost:5173'], // Dev origins, production should be set via environment variables
         credentials: true,
-        maxAge: 600
+        maxAge: 600 // 10 minutes
     }));
-    app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 500 }));
+    app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 500 }));  // 500 requests per 15 minutes
 
     // Set pokemon cache in context
     app.use('*', async (c, next) => {
         c.set('pokemonCache', pokemonCache);
         await next();
+    });
+
+    // ETag middleware for 304 responses
+    app.use('*', etag());
+
+    // Cache-Control headers
+    app.use('/api/*', async (c, next) => {
+        await next();
+
+        const path = c.req.path;
+        if (path.match(/\/api\/pokemon\/\d+$/) ||
+            path === '/api/pokemon/types' ||
+            path === '/api/pokemon/generations') {
+            c.header('Cache-Control', 'public, max-age=3600'); // 1 hour
+        }
+        else if (path === '/api/pokemon') {
+            c.header('Cache-Control', 'public, max-age=300');  // 5 minutes
+        }
     });
 
     // Health check
