@@ -19,7 +19,8 @@ export const loadOrFetchPokemon = async (): Promise<PokemonData[]> => {
             CACHE_FILE, 
             JSON.stringify(sortedData, undefined, 4)
         );
+
         console.log('💾 Cache gespeichert');
-        return data;
+        return sortedData;
     }
 };
