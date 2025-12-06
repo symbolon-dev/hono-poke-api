@@ -1,14 +1,8 @@
 import type { z } from 'zod';
 
-import type {
-    EvolutionChainSchema,
-    GenerationSchema,
-    MappedEvolutionSchema,
-    PokemonDataSchema,
-    PokemonDetailsSchema,
-    PokemonSpeciesSchema,
-    QueryParamsSchema
-} from '@/schemas/pokemon';
+import type { EvolutionChainSchema, GenerationSchema, PokemonDetailsSchema, PokemonSpeciesSchema } from '@/schemas/api';
+import type { MappedEvolutionSchema, PokemonDataSchema } from '@/schemas/pokemon';
+import type { QueryParamsSchema } from '@/schemas/query';
 
 export type PokemonData = z.infer<typeof PokemonDataSchema>;
 export type GenerationData = z.infer<typeof GenerationSchema>;

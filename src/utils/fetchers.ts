@@ -1,6 +1,6 @@
 import { chunk } from 'lodash-es';
 
-import { EvolutionSchema,GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, PokemonSpeciesSchema } from '@/schemas/pokemon';
+import { EvolutionSchema, GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, PokemonSpeciesSchema } from '@/schemas/api';
 import type { GenerationData, PokemonData, PokemonDetails } from '@/types/pokemon';
 import { mapPokemonData } from '@/utils/mappers';
 
