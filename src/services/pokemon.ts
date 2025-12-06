@@ -8,7 +8,7 @@ const CACHE_FILE = './pokemon-cache.json';
 export const loadOrFetchPokemon = async (): Promise<PokemonData[]> => {
     try {
         const cached = await fs.readFile(CACHE_FILE, 'utf-8');
-        console.log('📦 Cache geladen');
+        console.log('ℹ️ Cache loaded');
         return JSON.parse(cached) as PokemonData[];
     } catch {
         const data = await loadAllPokemon();
@@ -20,7 +20,7 @@ export const loadOrFetchPokemon = async (): Promise<PokemonData[]> => {
             JSON.stringify(sortedData, undefined, 4)
         );
 
-        console.log('💾 Cache gespeichert');
+        console.log('✅ Cache saved');
         return sortedData;
     }
 };

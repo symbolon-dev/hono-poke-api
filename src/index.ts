@@ -12,8 +12,8 @@ const startServer = async () => {
         port: port
     });
 
-    console.log(`✅ API bereit unter http://localhost:${port}`);
-    console.log(`📊 ${pokemonCache.length} Pokémon in cache`);
+    console.log(`✅ API ready at http://localhost:${port}`);
+    console.log(`ℹ️ ${pokemonCache.length} Pokémon in cache`);
 };
 
 startServer().catch(err => console.error('❌ Error on start:', err));

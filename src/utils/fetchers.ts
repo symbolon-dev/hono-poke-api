@@ -10,18 +10,18 @@ const fetchJson = async <T>(url: string): Promise<T | undefined> => {
     try {
         let res = await fetch(url);
         if (!res.ok) {
-            console.warn(`HTTP ${res.status} bei ${url}`);
+            console.warn(`⚠️ HTTP ${res.status} at ${url}`);
             if (res.status === 500) {
                 const fallbackUrl = url.replace(/\/$/, '');
                 if (fallbackUrl !== url) {
-                    console.warn(`⚠️ Retry ohne trailing slash für ${url}`);
+                    console.warn(`⚠️ Retry without trailing slash for ${url}`);
                     res = await fetch(fallbackUrl);
                 }
             }
         }
 
         if (!res.ok) {
-            console.warn(`HTTP ${res.status} bei ${url} (nach fallback)`);
+            console.warn(`⚠️ HTTP ${res.status} at ${url} (after fallback)`);
             return undefined;
         }
 
@@ -30,11 +30,11 @@ const fetchJson = async <T>(url: string): Promise<T | undefined> => {
         try {
             return JSON.parse(text) as T;
         } catch (err) {
-            console.warn(`Fehler beim Parsen von JSON für ${url}:`, err);
+            console.warn(`⚠️ Error parsing JSON for ${url}:`, err);
             return undefined;
         }
     } catch (err) {
-        console.warn(`Fetch-Fehler für ${url}:`, err);
+        console.warn(`⚠️ Fetch error for ${url}:`, err);
         return undefined;
     }
 }
@@ -44,7 +44,7 @@ const fetchGenerationData = async (genId: number): Promise<GenerationData | unde
         const data = await fetchJson(`https://pokeapi.co/api/v2/generation/${genId}`);
         return GenerationSchema.parse(data);
     } catch (error) {
-        console.warn('⚠️  Fehler beim Laden der Generationen', error);
+        console.warn('⚠️ Error loading generations', error);
         return undefined;
     }
 };
@@ -65,7 +65,7 @@ const fetchPokemon = async (url: string): Promise<PokemonDetails | undefined> =>
 
         return { ...details, ...evolutions };
     } catch (error) {
-        console.warn(`⚠️  Fehler beim Laden der Details von ${url}:`, error);
+        console.warn(`⚠️ Error loading details from ${url}:`, error);
         return undefined;
     }
 };
@@ -100,7 +100,7 @@ const loadGenerationPokemon = async (genId: number): Promise<PokemonData[]> => {
 };
 
 export const loadAllPokemon = async (): Promise<PokemonData[]> => {
-    console.log("🔄 Lade alle Pokémon aus allen Generationen...");
+    console.log("ℹ️ Loading all Pokémon from all generations...");
 
     const data = await fetchJson('https://pokeapi.co/api/v2/generation/');
     const generations = GenerationsListSchema.parse(data);
@@ -113,7 +113,7 @@ export const loadAllPokemon = async (): Promise<PokemonData[]> => {
 
     const allPokemon = allGenerations.flat();
     
-    console.log(`🎉 Gesamt: ${allPokemon.length} Pokémon geladen.`);
+    console.log(`✅ Total: ${allPokemon.length} Pokémon loaded.`);
     
     return allPokemon;
 };
