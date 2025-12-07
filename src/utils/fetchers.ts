@@ -2,6 +2,7 @@ import { chunk } from 'lodash-es';
 
 import { EvolutionSchema, GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, PokemonSpeciesSchema, TypeDetailsApiSchema } from '@/schemas/api';
 import type { GenerationData, PokemonData, PokemonDetails, TypeDetails } from '@/types/pokemon';
+import { cacheGet, cacheSet } from '@/utils/cache';
 import { mapPokemonData, mapTypeDetails } from '@/utils/mappers';
 
 const BATCH_SIZE = 25;
@@ -16,6 +17,9 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
 };
 
 const fetchJson = async <T>(url: string): Promise<T | undefined> => {
+    const cached = cacheGet<T>(url);
+    if (cached) return cached;
+
     try {
         let res = await withTimeout(fetch(url), REQUEST_TIMEOUT_MS);
         if (!res.ok) {
@@ -37,7 +41,14 @@ const fetchJson = async <T>(url: string): Promise<T | undefined> => {
 
         const text = await res.text();
         try {
-            return JSON.parse(text) as T;
+            const data = JSON.parse(text) as T;
+
+            // Cache permanently (Pokemon data never changes)
+            if (data) {
+                cacheSet(url, data);
+            }
+
+            return data;
         } catch (err) {
             console.warn(`⚠️ Error parsing JSON for ${url}:`, err);
             return undefined;

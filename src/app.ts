@@ -7,6 +7,7 @@ import { secureHeaders } from 'hono/secure-headers';
 
 import { env } from '@/config/env';
 import { rateLimiter } from '@/middleware/rate-limiter';
+import { cacheRoutes } from '@/routes/cache';
 import { pokemonRoutes } from '@/routes/pokemon';
 import type { PokemonData } from '@/types/pokemon';
 
@@ -38,19 +39,10 @@ export const createApp = (pokemonCache: PokemonData[]) => {
     // ETag middleware for 304 responses
     app.use('*', etag());
 
-    // Cache-Control headers
-    app.use('/api/*', async (c, next) => {
+    // Cache-Control headers (browser/CDN caching)
+    app.use('/api/pokemon/*', async (c, next) => {
         await next();
-
-        const path = c.req.path;
-        if (path.match(/\/api\/pokemon\/\d+$/) ||
-            path === '/api/pokemon/types' ||
-            path === '/api/pokemon/generations') {
-            c.header('Cache-Control', 'public, max-age=3600'); // 1 hour
-        }
-        else if (path === '/api/pokemon') {
-            c.header('Cache-Control', 'public, max-age=300');  // 5 minutes
-        }
+        c.header('Cache-Control', 'public, max-age=604800'); // 1 week
     });
 
     // Health check
@@ -58,6 +50,10 @@ export const createApp = (pokemonCache: PokemonData[]) => {
 
     // Routes
     app.route('/api/pokemon', pokemonRoutes);
+
+    if (env.NODE_ENV === 'development') {
+        app.route('/api/cache', cacheRoutes);
+    }
 
     // OpenAPI documentation
     app.doc('/doc', {
