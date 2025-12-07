@@ -3,6 +3,7 @@ import { chunk } from 'lodash-es';
 import { EvolutionSchema, GenerationSchema, GenerationsListSchema, PokemonDetailsSchema, PokemonSpeciesSchema, TypeDetailsApiSchema } from '@/schemas/api';
 import type { GenerationData, PokemonData, PokemonDetails, TypeDetails } from '@/types/pokemon';
 import { cacheGet, cacheSet } from '@/utils/cache';
+import { logger } from '@/utils/logger';
 import { mapPokemonData, mapTypeDetails } from '@/utils/mappers';
 
 const BATCH_SIZE = 25;
@@ -23,18 +24,18 @@ const fetchJson = async <T>(url: string): Promise<T | undefined> => {
     try {
         let res = await withTimeout(fetch(url), REQUEST_TIMEOUT_MS);
         if (!res.ok) {
-            console.warn(`⚠️ HTTP ${res.status} at ${url}`);
+            logger.warn({ status: res.status, url }, 'HTTP error');
             if (res.status === 500) {
                 const fallbackUrl = url.replace(/\/$/, '');
                 if (fallbackUrl !== url) {
-                    console.warn(`⚠️ Retry without trailing slash for ${url}`);
+                    logger.warn({ url }, 'Retry without trailing slash');
                     res = await withTimeout(fetch(fallbackUrl), REQUEST_TIMEOUT_MS);
                 }
             }
         }
 
         if (!res.ok) {
-            console.warn(`⚠️ HTTP ${res.status} at ${url} (after fallback)`);
+            logger.warn({ status: res.status, url }, 'HTTP error after fallback');
             return undefined;
         }
 
@@ -50,11 +51,11 @@ const fetchJson = async <T>(url: string): Promise<T | undefined> => {
 
             return data;
         } catch (err) {
-            console.warn(`⚠️ Error parsing JSON for ${url}:`, err);
+            logger.warn({ err, url }, 'Error parsing JSON');
             return undefined;
         }
     } catch (err) {
-        console.warn(`⚠️ Fetch error for ${url}:`, err);
+        logger.warn({ err, url }, 'Fetch error');
         return undefined;
     }
 }
@@ -64,7 +65,7 @@ const fetchGenerationData = async (genId: number): Promise<GenerationData | unde
         const data = await fetchJson(`${POKEAPI_BASE_URL}/generation/${genId}`);
         return GenerationSchema.parse(data);
     } catch (error) {
-        console.warn('⚠️ Error loading generations', error);
+        logger.warn({ error, genId }, 'Error loading generation');
         return undefined;
     }
 };
@@ -85,7 +86,7 @@ const fetchPokemon = async (url: string): Promise<PokemonDetails | undefined> =>
 
         return { ...details, ...evolutions };
     } catch (error) {
-        console.warn(`⚠️ Error loading details from ${url}:`, error);
+        logger.warn({ error, url }, 'Error loading pokemon details');
         return undefined;
     }
 };
@@ -108,7 +109,7 @@ const loadGenerationPokemon = async (genId: number): Promise<PokemonData[]> => {
     const genData = await fetchGenerationData(genId);
 
     if (!genData?.pokemon_species) {
-        console.warn(`⚠️ No Pokemon species data for generation ${genId}`);
+        logger.warn({ genId }, 'No Pokemon species data for generation');
         return [];
     }
 
@@ -117,7 +118,7 @@ const loadGenerationPokemon = async (genId: number): Promise<PokemonData[]> => {
     const allPokemon = await Promise.all(
         batches.map(async (batch, index) => {
             const pokemon = await fetchPokemonBatch(batch, genId);
-            console.log(`  ✅ Gen ${genId} - Batch ${index + 1}/${batches.length} (${pokemon.length} Pokémon)`);
+            logger.debug(`Gen ${genId} - Batch ${index + 1}/${batches.length} (${pokemon.length} Pokémon)`);
             return pokemon;
         })
     );
@@ -126,7 +127,7 @@ const loadGenerationPokemon = async (genId: number): Promise<PokemonData[]> => {
 };
 
 export const loadAllPokemon = async (): Promise<PokemonData[]> => {
-    console.log("ℹ️ Loading all Pokémon from all generations...");
+    logger.info('Loading all Pokémon from all generations...');
 
     const data = await fetchJson(`${POKEAPI_BASE_URL}/generation/`);
     const generations = GenerationsListSchema.parse(data);
@@ -139,7 +140,7 @@ export const loadAllPokemon = async (): Promise<PokemonData[]> => {
 
     const allPokemon = allGenerations.flat();
 
-    console.log(`✅ Total: ${allPokemon.length} Pokémon loaded.`);
+    logger.info(`Total: ${allPokemon.length} Pokémon loaded`);
 
     return allPokemon;
 };
@@ -152,7 +153,7 @@ export const fetchTypeDetails = async (typeName: string): Promise<TypeDetails | 
         const parsed = TypeDetailsApiSchema.parse(data);
         return mapTypeDetails(parsed);
     } catch (error) {
-        console.warn(`⚠️ Error loading type details for ${typeName}:`, error);
+        logger.warn({ error, typeName }, 'Error loading type details');
         return undefined;
     }
 };

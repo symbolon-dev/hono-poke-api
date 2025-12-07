@@ -3,8 +3,9 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import { compress } from 'hono/compress';
 import { cors } from 'hono/cors';
 import { etag } from 'hono/etag';
-import { logger } from 'hono/logger';
 import { secureHeaders } from 'hono/secure-headers';
+import { type PinoLogger,pinoLogger } from 'hono-pino';
+import pino from 'pino';
 
 import { env } from '@/config/env';
 import { rateLimiter } from '@/middleware/rate-limiter';
@@ -14,7 +15,8 @@ import type { PokemonData } from '@/types/pokemon';
 
 type AppVariables = {
     Variables: {
-        pokemonCache: PokemonData[],
+        pokemonCache: PokemonData[];
+        logger: PinoLogger;
     }
 }
 
@@ -22,7 +24,17 @@ export const createApp = (pokemonCache: PokemonData[]) => {
     const app = new OpenAPIHono<AppVariables>();
 
     // Global middleware
-    app.use('*', logger());
+    app.use('*', pinoLogger({
+        pino: env.NODE_ENV === 'development'
+            ? pino({
+                level: 'debug',
+                transport: {
+                    target: 'pino-pretty',
+                    options: { colorize: true }
+                }
+            })
+            : pino({ level: 'info' })
+    }));
     app.use('*', compress());
     app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 500 }));  // 500 requests per 15 minutes
     app.use('*', secureHeaders());
@@ -75,7 +87,7 @@ export const createApp = (pokemonCache: PokemonData[]) => {
 
     // Error handling
     app.onError((err, c) => {
-        console.error('Error:', err);
+        c.get('logger').error({ err }, 'Request error');
         return c.json({
             error: env.NODE_ENV === 'production'
                 ? 'Internal Server Error'

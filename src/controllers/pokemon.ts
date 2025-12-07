@@ -11,7 +11,7 @@ export const getPokemon = (c: Context) => {
     const pokemonCache: PokemonData[] = c.get('pokemonCache')
 
     if (!pokemonCache || pokemonCache.length === 0) {
-        console.error('❌ Pokemon cache is not initialized!')
+        c.get('logger').error('Pokemon cache is not initialized!');
         return c.json({ error: 'Service unavailable', status: 503 }, 503)
     }
 
@@ -44,7 +44,7 @@ export const getPokemonById = (c: Context) => {
     const pokemonCache: PokemonData[] = c.get('pokemonCache')
 
     if (!pokemonCache || pokemonCache.length === 0) {
-        console.error('❌ Pokemon cache is not initialized!')
+        c.get('logger').error('Pokemon cache is not initialized!');
         return c.json({ error: 'Service unavailable', status: 503 }, 503)
     }
 
@@ -62,7 +62,7 @@ export const getTypes = (c: Context) => {
     const pokemonCache: PokemonData[] = c.get('pokemonCache');
 
     if (!pokemonCache || pokemonCache.length === 0) {
-        console.error('❌ Pokemon cache is not initialized!');
+        c.get('logger').error('Pokemon cache is not initialized!');
         return c.json({ error: 'Service unavailable', status: 503 }, 503);
     }
 
@@ -90,7 +90,7 @@ export const getGenerations = (c: Context) => {
     const pokemonCache: PokemonData[] = c.get('pokemonCache');
 
     if (!pokemonCache || pokemonCache.length === 0) {
-        console.error('❌ Pokemon cache is not initialized!');
+        c.get('logger').error('Pokemon cache is not initialized!');
         return c.json({ error: 'Service unavailable', status: 503 }, 503);
     }
 
