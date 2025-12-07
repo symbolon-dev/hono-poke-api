@@ -9,10 +9,12 @@ type RateLimiterOptions = {
 // Simple in-memory rate limiter - for production use Redis-based solution
 export const rateLimiter = (options: RateLimiterOptions = {}) => {
     let requests = new Map<string, number[]>()
+    let lastPrune = Date.now()
 
     const windowMs = options.windowMs ?? 15 * 60 * 1000 // 15 minutes
     const max = options.max ?? 100
     const maxIPs = options.maxIPs ?? 500
+    const pruneInterval = 60 * 1000 // 1 minute
 
     const prune = () => {
         const now = Date.now()
@@ -30,11 +32,14 @@ export const rateLimiter = (options: RateLimiterOptions = {}) => {
                 .slice(0, maxIPs)
             requests = new Map(sortedEntries)
         }
+
+        lastPrune = now
     }
 
-    setInterval(prune, 60 * 1000) // 1 minute
-
     return async (c: Context, next: Next) => {
+        if (Date.now() - lastPrune > pruneInterval) {
+            prune()
+        }
         const ip = c.req.header("x-forwarded-for")?.split(",")[0]?.trim()
             ?? c.req.header("cf-connecting-ip")?.trim()
             ?? c.req.header("x-real-ip")?.trim()
