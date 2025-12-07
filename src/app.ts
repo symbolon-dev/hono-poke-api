@@ -41,7 +41,7 @@ export const createApp = (pokemonCache: PokemonData[]) => {
     app.use('*', cors({
         origin: env.CORS_ORIGINS,
         credentials: true,
-        maxAge: 600 // 10 minutes
+        maxAge: 86400 // 24 hours
     }));
 
     // Set pokemon cache in context
