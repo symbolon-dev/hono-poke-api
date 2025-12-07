@@ -13,9 +13,9 @@ export const PokemonListQuerySchema = z.object({
     limit: z.coerce.number().int().positive().optional().openapi({ example: 20, description: 'Items per page' }),
     name: z.string().optional().openapi({ example: 'Pikachu', description: 'Filter by partial or full name.' }),
     id: z.coerce.number().int().positive().optional().openapi({ example: 25, description: 'Filter by exact Pokemon ID.' }),
-    types: z.string().optional().openapi({
+    types: z.union([z.string(), z.array(z.string())]).optional().openapi({
         example: 'electric',
-        description: 'Filter by one or more types (comma-separated or repeated parameter).'
+        description: 'Filter by one or more types. Use repeated parameter (types=fire&types=flying) to filter Pokemon with ALL specified types.'
     }),
     generation: z.coerce.number().int().positive().optional().openapi({ example: 1, description: 'Filter by Generation number.' }),
     sort: z.enum(['id', 'name']).optional().openapi({ example: 'id', description: 'Field to sort by (id or name).' }),
