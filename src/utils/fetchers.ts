@@ -104,9 +104,15 @@ const fetchPokemonBatch = async (
     return results.filter((p): p is PokemonData => p !== undefined);
 };
 
-const loadGenerationPokemon = async (genId: number): Promise<PokemonData[]> => { 
+const loadGenerationPokemon = async (genId: number): Promise<PokemonData[]> => {
     const genData = await fetchGenerationData(genId);
-    const batches = chunk(genData?.pokemon_species, BATCH_SIZE);
+
+    if (!genData?.pokemon_species) {
+        console.warn(`⚠️ No Pokemon species data for generation ${genId}`);
+        return [];
+    }
+
+    const batches = chunk(genData.pokemon_species, BATCH_SIZE);
 
     const allPokemon = await Promise.all(
         batches.map(async (batch, index) => {
