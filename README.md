@@ -8,7 +8,7 @@ REST API for Pokemon data built with [Hono](https://hono.dev/) + [Bun](https://b
 - In-memory caching for fast responses
 - Filter by name, ID, type & generation
 - Pagination & sorting
-- Rate limiting (100 req/15min)
+- Rate limiting (500 req/15min)
 
 ## API Endpoints
 
