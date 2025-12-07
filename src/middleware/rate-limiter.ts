@@ -54,9 +54,12 @@ export const rateLimiter = (options: RateLimiterOptions = {}) => {
         const updated = [...userRequests, now]
         requests.set(ip, updated)
 
+        const oldestRequest = updated[0] ?? now
+        const resetTime = oldestRequest + windowMs
+
         c.header("X-RateLimit-Limit", String(max))
         c.header("X-RateLimit-Remaining", String(max - updated.length))
-        c.header("X-RateLimit-Reset", String(Math.floor((now + windowMs) / 1000)))
+        c.header("X-RateLimit-Reset", String(Math.floor(resetTime / 1000)))
 
         await next()
     }
