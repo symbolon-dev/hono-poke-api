@@ -25,8 +25,8 @@ export const getPokemon = (c: Context) => {
 
     const filtered = queryPokemon(params)(pokemonCache)
 
-    const page = Number(c.req.query('page')) || 1
-    const requestedLimit = Number(c.req.query('limit')) || DEFAULT_LIMIT
+    const page = Math.max(1, Number(c.req.query('page')) || 1)
+    const requestedLimit = Math.max(1, Number(c.req.query('limit')) || DEFAULT_LIMIT)
     const limit = Math.min(requestedLimit, MAX_LIMIT)
     const offset = (page - 1) * limit
     const paginated = filtered.slice(offset, offset + limit)
@@ -82,6 +82,7 @@ export const getTypeByName = async (c: Context) => {
         return c.json({ error: 'Type not found', status: 404 }, 404);
     }
 
+    c.header('Cache-Control', 'public, max-age=604800'); // 1 week
     return c.json(typeDetails, 200);
 };
 
