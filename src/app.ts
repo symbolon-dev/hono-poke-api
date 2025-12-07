@@ -105,3 +105,5 @@ export const createApp = (pokemonCache: PokemonData[]) => {
 
     return app;
 };
+
+export type AppType = ReturnType<typeof createApp>;
