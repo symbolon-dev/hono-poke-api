@@ -12,7 +12,7 @@ export const initializePokemonCache = async (): Promise<PokemonData[]> => {
         logger.info('Pokemon cache loaded from file');
         return JSON.parse(cached) as PokemonData[];
     } catch (err) {
-        logger.info('Cache not found, fetching from PokeAPI');
+        logger.info(`Cache not found, fetching from PokeAPI: ${err}`);
         const data = await fetchAllPokemon();
 
         const sortedData = [...data].sort((a, b) => a.id - b.id);
