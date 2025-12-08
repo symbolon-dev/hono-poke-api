@@ -9,13 +9,25 @@ const startServer = async () => {
 
     const app = createApp(pokemonCache);
 
-    Bun.serve({
+    const server = Bun.serve({
         fetch: app.fetch,
         port: port
     });
 
     logger.info(`API ready at http://localhost:${port}`);
     logger.info(`${pokemonCache.length} Pokémon in cache`);
+
+    const shutdown = async (signal: string) => {
+        logger.info(`${signal} received, shutting down gracefully...`);
+
+        server.stop();
+
+        logger.info('Server closed, exiting process');
+        process.exit(0);
+    };
+
+    process.on('SIGINT', () => shutdown('SIGINT'));
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
 };
 
 startServer().catch(err => logger.error({ err }, 'Error on start'));
