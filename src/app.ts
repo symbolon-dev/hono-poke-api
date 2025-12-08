@@ -9,7 +9,6 @@ import pino from 'pino';
 
 import { env } from '@/config/env';
 import { rateLimiter } from '@/middleware/rate-limiter';
-import { cacheRoutes } from '@/routes/cache';
 import { pokemonRoutes } from '@/routes/pokemon';
 import type { PokemonData } from '@/types/pokemon';
 
@@ -64,10 +63,6 @@ export const createApp = (pokemonCache: PokemonData[]) => {
 
     // Routes
     app.route('/api/pokemon', pokemonRoutes);
-
-    if (env.NODE_ENV === 'development') {
-        app.route('/api/cache', cacheRoutes);
-    }
 
     // OpenAPI documentation
     app.doc('/doc', {

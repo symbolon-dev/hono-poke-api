@@ -85,10 +85,3 @@ export const TypeDetailsSchema = z.object({
     name: z.string().openapi({ example: 'fire', description: 'Type name' }),
     damageRelations: DamageRelationsSchema
 }).openapi('TypeDetails');
-
-export const CacheStatsSchema = z.object({
-    hits: z.number().openapi({ example: 150 }),
-    misses: z.number().openapi({ example: 25 }),
-    size: z.number().openapi({ example: 151 }),
-    hitRate: z.string().openapi({ example: '85.7%' })
-}).openapi('CacheStats');

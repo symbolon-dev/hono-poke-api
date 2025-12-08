@@ -18,9 +18,6 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> => {
 };
 
 const fetchJson = async <T>(url: string): Promise<T | undefined> => {
-    const cached = cacheGet<T>(url);
-    if (cached) return cached;
-
     try {
         let res = await withTimeout(fetch(url), REQUEST_TIMEOUT_MS);
         if (!res.ok) {
@@ -43,12 +40,6 @@ const fetchJson = async <T>(url: string): Promise<T | undefined> => {
         const text = await res.text();
         try {
             const data = JSON.parse(text) as T;
-
-            // Cache permanently (Pokemon data never changes)
-            if (data) {
-                cacheSet(url, data);
-            }
-
             return data;
         } catch (err) {
             logger.warn({ err, url }, 'Error parsing JSON');
@@ -146,12 +137,19 @@ export const loadAllPokemon = async (): Promise<PokemonData[]> => {
 };
 
 export const fetchTypeDetails = async (typeName: string): Promise<TypeDetails | undefined> => {
+    const cacheKey = `type:${typeName}`;
+    const cached = cacheGet<TypeDetails>(cacheKey);
+    if (cached) return cached;
+
     try {
         const data = await fetchJson(`${POKEAPI_BASE_URL}/type/${typeName}`);
         if (!data) return undefined;
 
         const parsed = TypeDetailsApiSchema.parse(data);
-        return mapTypeDetails(parsed);
+        const typeDetails = mapTypeDetails(parsed);
+
+        cacheSet(cacheKey, typeDetails);
+        return typeDetails;
     } catch (error) {
         logger.warn({ error, typeName }, 'Error loading type details');
         return undefined;
