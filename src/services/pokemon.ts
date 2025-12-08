@@ -1,18 +1,19 @@
 import fs from 'fs/promises';
 
 import type { PokemonData } from '@/types/pokemon';
-import { loadAllPokemon } from '@/utils/fetchers';
+import { fetchAllPokemon } from '@/utils/fetchers';
 import { logger } from '@/utils/logger';
 
-const CACHE_FILE = './pokemon-cache.json';
+const CACHE_FILE = './src/data/pokemon-cache.json';
 
-export const loadOrFetchPokemon = async (): Promise<PokemonData[]> => {
+export const initializePokemonCache = async (): Promise<PokemonData[]> => {
     try {
         const cached = await fs.readFile(CACHE_FILE, 'utf-8');
-        logger.info('Cache loaded');
+        logger.info('Pokemon cache loaded from file');
         return JSON.parse(cached) as PokemonData[];
-    } catch {
-        const data = await loadAllPokemon();
+    } catch (err) {
+        logger.info('Cache not found, fetching from PokeAPI');
+        const data = await fetchAllPokemon();
 
         const sortedData = [...data].sort((a, b) => a.id - b.id);
 
@@ -21,7 +22,7 @@ export const loadOrFetchPokemon = async (): Promise<PokemonData[]> => {
             JSON.stringify(sortedData, undefined, 4)
         );
 
-        logger.info('Cache saved');
+        logger.info('Pokemon cache saved to file');
         return sortedData;
     }
 };

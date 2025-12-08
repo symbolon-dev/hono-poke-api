@@ -37,8 +37,7 @@ ehthumbs.db
 Desktop.ini
 
 # Cache / data files
-pokemon-cache.json
-backup-pokemon-cache.json
+src/data/*.json
 .cache/
 .tmp/
 

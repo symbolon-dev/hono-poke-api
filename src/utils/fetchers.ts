@@ -117,8 +117,8 @@ const loadGenerationPokemon = async (genId: number): Promise<PokemonData[]> => {
     return allPokemon.flat();
 };
 
-export const loadAllPokemon = async (): Promise<PokemonData[]> => {
-    logger.info('Loading all Pokémon from all generations...');
+export const fetchAllPokemon = async (): Promise<PokemonData[]> => {
+    logger.info('Fetching all Pokémon from PokeAPI...');
 
     const data = await fetchJson(`${POKEAPI_BASE_URL}/generation/`);
     const generations = GenerationsListSchema.parse(data);
@@ -131,7 +131,7 @@ export const loadAllPokemon = async (): Promise<PokemonData[]> => {
 
     const allPokemon = allGenerations.flat();
 
-    logger.info(`Total: ${allPokemon.length} Pokémon loaded`);
+    logger.info(`Total: ${allPokemon.length} Pokémon fetched`);
 
     return allPokemon;
 };
