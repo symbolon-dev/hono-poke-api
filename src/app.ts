@@ -1,6 +1,5 @@
 import { swaggerUI } from '@hono/swagger-ui';
 import { OpenAPIHono } from '@hono/zod-openapi';
-import { compress } from 'hono/compress';
 import { cors } from 'hono/cors';
 import { etag } from 'hono/etag';
 import { secureHeaders } from 'hono/secure-headers';
@@ -34,7 +33,6 @@ export const createApp = (pokemonCache: PokemonData[]) => {
             })
             : pino({ level: 'info' })
     }));
-    app.use('*', compress());
     app.use('*', rateLimiter({ windowMs: 15 * 60 * 1000, max: 500 }));  // 500 requests per 15 minutes
     app.use('*', secureHeaders());
     app.use('*', cors({
